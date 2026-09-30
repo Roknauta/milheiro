@@ -1,0 +1,23 @@
+<ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough">
+    <cc:interface>
+        <cc:attribute name="value" required="true"/>
+        <cc:attribute name="label" default=""/>
+        <cc:attribute name="required" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="disabled" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="readonly" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="requiredMessage" default="#{msg['componente.obrigatorio']}"/>
+        <cc:attribute name="maxlength" type="java.lang.Integer" default="500"/>
+        <cc:attribute name="rows" type="java.lang.Integer" default="2"/>
+        <cc:attribute name="autoResize" type="java.lang.Boolean" default="false"/>
+        <cc:editableValueHolder name="input" targets="input"/>
+        <cc:clientBehavior name="change" event="change" targets="input" default="true"/>
+        <cc:clientBehavior name="keyup" event="keyup" targets="input"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:panelGroup layout="block" style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;">
+            <p:outputLabel for="input" value="#{cc.attrs.label}" rendered="#{not empty cc.attrs.label}"/>
+            <p:inputTextarea id="input" value="#{cc.attrs.value}" label="#{cc.attrs.label}" required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled}" readonly="#{cc.attrs.readonly}" requiredMessage="#{cc.attrs.requiredMessage}" maxlength="#{cc.attrs.maxlength}" rows="#{cc.attrs.rows}" autoResize="#{cc.attrs.autoResize}" style="width: 100%; min-width: 0; box-sizing: border-box;"/>
+            <p:message for="input"/>
+        </h:panelGroup>
+    </cc:implementation>
+</ui:component>

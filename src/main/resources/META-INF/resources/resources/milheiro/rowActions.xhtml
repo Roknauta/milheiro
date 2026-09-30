@@ -1,0 +1,18 @@
+<ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough">
+    <cc:interface>
+        <cc:attribute name="edit" method-signature="java.lang.Object edit()" required="true"/>
+        <cc:attribute name="remove" method-signature="java.lang.Object remove()" required="true"/>
+        <cc:attribute name="disabled" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="removeLabel" default="#{msg['interface.excluir']}"/>
+        <cc:attribute name="confirmHeader" default="#{msg['interface.excluir.registro']}"/>
+        <cc:attribute name="confirmMessage" default="#{msg['interface.confirma.esta.acao']}"/>
+    </cc:interface>
+    <cc:implementation>
+        <p:menuButton id="options" icon="pi pi-ellipsis-v" title="#{msg['interface.opcoes']}" ariaLabel="#{msg['interface.opcoes']}" buttonStyleClass="ui-button-sm">
+            <p:menuitem id="edit" value="#{msg['interface.editar']}" icon="pi pi-pencil" action="#{cc.attrs.edit}" disabled="#{cc.attrs.disabled}" process="@this" update=":conteudoCrud" resetValues="true"/>
+            <p:menuitem id="remove" value="#{cc.attrs.removeLabel}" icon="pi pi-trash" action="#{cc.attrs.remove}" disabled="#{cc.attrs.disabled}" process="@this" update=":conteudoCrud">
+                <p:confirm header="#{cc.attrs.confirmHeader}" message="#{cc.attrs.confirmMessage}"/>
+            </p:menuitem>
+        </p:menuButton>
+    </cc:implementation>
+</ui:component>

@@ -1,0 +1,10 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough" template="/WEB-INF/template.xhtml">
+    <ui:param name="pagina" value="#{msg['interface.enviar']}"/>
+    <ui:define name="titulo"> #{msg['interface.calculadora.enviar']} </ui:define>
+    <ui:define name="descricao"> #{msg['interface.informe.quantos.pontos.sairao.da.origem.e.veja.o.credito.no.destino']} </ui:define>
+    <ui:define name="conteudo">
+        <ui:include src="/WEB-INF/calculadora-transferencia.xhtml">
+            <ui:param name="receber" value="#{false}"/>
+        </ui:include>
+    </ui:define>
+</ui:composition>

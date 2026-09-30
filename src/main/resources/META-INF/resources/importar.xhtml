@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html"
+                xmlns:m="jakarta.faces.composite/resources/milheiro"
+                xmlns:pt="jakarta.faces.passthrough" template="/WEB-INF/template.xhtml">
+    <ui:param name="pagina" value="#{msg['interface.importar']}"/>
+    <ui:define name="titulo"> #{msg['interface.importar.de.planilha']} </ui:define>
+    <ui:define name="descricao"> #{msg['interface.carregue.suas.operacoes.a.partir.de.um.arquivo.excel']} </ui:define>
+    <ui:define name="conteudo">
+        <p:panel style="margin-bottom: 1rem; min-width: 0;">
+            <h:panelGroup style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem;" layout="block">
+                <h:outputText style="display: block; font-size: 1.1rem; font-weight: 600; margin: 1rem 0;" value="#{msg['interface.selecionar.planilha']}"/>
+                <h:outputLink value="#{request.contextPath}/modelo-importacao.xlsx">
+                    <h:panelGroup layout="inline"/> #{msg['interface.download.de.modelo']} </h:outputLink>
+            </h:panelGroup>
+            <h:panelGroup layout="block"> #{msg['interface.somente.a.primeira.aba.e.as.colunas.a.a.f.sao.consideradas']} </h:panelGroup>
+            <h:panelGroup layout="block">
+                <h:panelGroup layout="inline" style=" font-weight: 600;">
+                    #{msg['interface.a']}
+                </h:panelGroup> #{msg['interface.data']}
+                <h:panelGroup layout="inline"                              style=" font-weight: 600;">
+                    #{msg['interface.b']}
+                </h:panelGroup>
+                #{msg['interface.tipo']}
+                <h:panelGroup layout="inline" style=" font-weight: 600;">
+                    #{msg['interface.c']}
+                </h:panelGroup>
+                #{msg['interface.quantidade']}
+                <h:panelGroup layout="inline"
+                              style=" font-weight: 600;">
+                    #{msg['interface.d']}
+                </h:panelGroup>
+                #{msg['interface.destino']}
+                <h:panelGroup layout="inline" style=" font-weight: 600;">
+                    #{msg['interface.e']}
+                </h:panelGroup>
+                #{msg['interface.valor']}
+                <h:panelGroup layout="inline"
+                              style=" font-weight: 600;">
+                    #{msg['interface.f']}
+                </h:panelGroup>
+                #{msg['interface.observacoes']}
+            </h:panelGroup>
+            <h:form id="importar" enctype="multipart/form-data">
+                <h:panelGroup style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;" layout="block">
+                    <m:inputFile id="arquivo" value="#{importacao.arquivo}" required="true" requiredMessage="#{msg['interface.selecione.uma.planilha.para.importar']}"
+                                 label="#{msg['interface.arquivo.excel.xlsx.ate.5.mb']}" accept=".xlsx"/>
+                </h:panelGroup>
+                <h:panelGroup style="display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0;" layout="block">
+                    <p:commandButton value="#{msg['interface.selecionar.e.importar']}" action="#{importacao.importar}" ajax="false" process="@form" update="@form"/>
+                </h:panelGroup>
+            </h:form>
+            <h:panelGroup rendered="#{importacao.resultado != null}" layout="block" pt:role="status" style="display: flex; flex-direction: column; gap: .5rem; margin: 1rem 0;">
+                <h:outputText value="#{importacao.resultado}"/>
+            </h:panelGroup>
+        </p:panel>
+        <p:panel style="margin-bottom: 1rem; min-width: 0;">
+            <h:outputText style="display: block; font-size: 1.1rem; font-weight: 600; margin: 1rem 0;" value="#{msg['interface.como.os.dados.serao.carregados']}"/>
+            <h:panelGroup layout="block"> #{msg['interface.quantidades.negativas.indicam.saidas.o.tipo.da.coluna.b.define.venda.resgate.o']} </h:panelGroup>
+            <h:panelGroup layout="block"> #{msg['interface.em.acumulo.a.coluna.d.indica.o.programa.que.recebe.nas.saidas.indica.o.program']} </h:panelGroup>
+            <h:panelGroup layout="block"> #{msg['interface.o.valor.representa.o.total.pago.no.acumulo.o.liquido.recebido.na.venda.e.taxas']} </h:panelGroup>
+            <h:outputText style="display: block; font-size: 1.1rem; font-weight: 600; margin: 1rem 0;" value="#{msg['interface.transferencias.em.duas.linhas']}"/>
+            <h:panelGroup layout="block"> #{msg['interface.registre.a.saida.como.transferencia.com.observacao']} <h:panelGroup layout="inline"
+                                                                                                                               style=" font-weight: 600;"> #{msg['interface.para.azul.fidelidade']} </h:panelGroup> #{msg['interface.por.exemplo.na.mesma.data.registre.o.credito.como.acumulo.no.destino.com.obser']}
+                <h:panelGroup layout="inline" style=" font-weight: 600;"> #{msg['interface.de.esfera']} </h:panelGroup> #{msg['interface.ou']} <h:panelGroup layout="inline"
+                                                                                                                                                             style=" font-weight: 600;"> #{msg['interface.da.esfera.com.80.de.bonus']} </h:panelGroup> #{msg['interface.texto']}
+            </h:panelGroup>
+            <h:panelGroup layout="block"> #{msg['interface.as.duas.linhas.viram.uma.unica.transferencia.as.quantidades.definem.a.conversa']} </h:panelGroup>
+            <h:panelGroup layout="block"> #{msg['interface.se.houver.duvida.na.correspondencia.das.linhas.ou.saldo.insuficiente.a.importa']} </h:panelGroup>
+            <h:panelGroup layout="block"> #{msg['interface.os.dados.existentes.sao.preservados.registros.identicos.ja.importados.por.esta']} </h:panelGroup>
+        </p:panel>
+    </ui:define>
+</ui:composition>

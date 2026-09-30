@@ -1,0 +1,30 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:m="jakarta.faces.composite/resources/milheiro"
+                template="/WEB-INF/template.xhtml">
+    <ui:param name="crudController" value="#{empty controladorCrud ? carteira : controladorCrud}"/>
+    <ui:define name="conteudo">
+        <h:panelGroup id="conteudoCrud" layout="block">
+            <h:form id="pesquisa" rendered="#{not crudController.editando}">
+                <p:outputPanel styleClass="crud-actions"><ui:insert name="novo"/></p:outputPanel>
+                <p:panel header="#{msg['interface.pesquisa']}" styleClass="crud-panel">
+                    <h:panelGroup layout="block" styleClass="crud-fields">
+                        <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{crudController.filtroPesquisa}"/>
+                    </h:panelGroup>
+                    <p:commandButton id="pesquisar" value="#{msg['interface.pesquisar']}" icon="pi pi-search"
+                                     action="#{crudController.pesquisar}" process="@form" update=":conteudoCrud"/>
+                </p:panel>
+            </h:form>
+            <h:form id="#{formularioId}">
+                <p:panel rendered="#{crudController.editando}" header="#{tituloFormulario}" styleClass="crud-panel">
+                    <ui:insert name="formulario"/>
+                    <p:outputPanel styleClass="crud-footer">
+                        <ui:insert name="salvar"/>
+                        <p:commandButton id="cancelar" value="#{msg['interface.voltar.pesquisa']}" icon="pi pi-times"
+                                         action="#{crudController.voltarPesquisa}" process="@this" update=":conteudoCrud" resetValues="true"/>
+                    </p:outputPanel>
+                </p:panel>
+                <ui:insert name="resultados"/>
+            </h:form>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

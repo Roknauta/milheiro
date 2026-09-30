@@ -1,0 +1,26 @@
+<ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough">
+    <cc:interface>
+        <cc:attribute name="value" required="true"/>
+        <cc:attribute name="label" default=""/>
+        <cc:attribute name="required" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="disabled" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="readonly" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="requiredMessage" default="#{msg['componente.obrigatorio']}"/>
+        <cc:attribute name="pattern" default="dd/MM/yyyy"/>
+        <cc:attribute name="showIcon" type="java.lang.Boolean" default="true"/>
+        <cc:attribute name="monthNavigator" type="java.lang.Boolean" default="true"/>
+        <cc:attribute name="yearNavigator" type="java.lang.Boolean" default="true"/>
+        <cc:attribute name="showButtonBar" type="java.lang.Boolean" default="true"/>
+        <cc:attribute name="readonlyInput" type="java.lang.Boolean" default="false"/>
+        <cc:editableValueHolder name="input" targets="input"/>
+        <cc:clientBehavior name="dateSelect" event="dateSelect" targets="input" default="true"/>
+        <cc:clientBehavior name="change" event="change" targets="input"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:panelGroup layout="block" style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;">
+            <p:outputLabel for="input" value="#{cc.attrs.label}" rendered="#{not empty cc.attrs.label}"/>
+            <p:datePicker id="input" value="#{cc.attrs.value}" label="#{cc.attrs.label}" required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled}" readonly="#{cc.attrs.readonly}" requiredMessage="#{cc.attrs.requiredMessage}" pattern="#{cc.attrs.pattern}" showIcon="#{cc.attrs.showIcon}" monthNavigator="#{cc.attrs.monthNavigator}" yearNavigator="#{cc.attrs.yearNavigator}" showButtonBar="#{cc.attrs.showButtonBar}" readonlyInput="#{cc.attrs.readonlyInput}" appendTo="@(body)" style="display: flex; width: 100%; min-width: 0;" inputStyle="flex: 1; width: 0; min-width: 0; box-sizing: border-box;"/>
+            <p:message for="input"/>
+        </h:panelGroup>
+    </cc:implementation>
+</ui:component>

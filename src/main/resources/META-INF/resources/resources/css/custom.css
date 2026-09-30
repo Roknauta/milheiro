@@ -1,0 +1,199 @@
+/* Paleta, estrutura da aplicação, dashboard e responsividade. */
+
+:root {
+    --green: #237455;
+    --green-dark: #143e32;
+    --green-soft: #eaf4ee;
+    --ink: #243e34;
+    --muted: #687e73;
+    --line: #dce7df;
+}
+
+body.milheiro-app {
+    margin: 0;
+    background: #f3f7f4;
+    color: var(--ink);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.milheiro-app * {
+    box-sizing: border-box;
+}
+
+.app-shell {
+    display: flex;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+.app-sidebar {
+    flex: 0 0 260px;
+    min-width: 0;
+    background: var(--green-dark);
+    padding: 24px 16px;
+}
+
+.app-workspace {
+    flex: 1;
+    min-width: 0;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+body.milheiro-app .page-panel {
+    border: 0;
+    background: transparent;
+}
+
+.page-description {
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.dashboard-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-top: 3px solid #7eb294;
+    border-radius: 10px;
+    padding: 22px;
+    min-width: 0;
+}
+
+.metric-card > span:first-child {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.metric-card > span:nth-child(2) {
+    color: #215c40;
+    font-size: clamp(20px, 2vw, 29px);
+    overflow-wrap: anywhere;
+}
+
+.metric-card > span:last-child {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.metric-card:first-child {
+    background: #e7f2eb;
+    border-color: #bed8c7;
+}
+
+.dashboard-link {
+    display: block;
+    padding: 22px;
+    background: #e6f2ea;
+    border: 1px solid #c9dfd1;
+    border-radius: 10px;
+    color: #24583e;
+    text-decoration: none;
+    line-height: 1.8;
+}
+
+.dashboard-link span {
+    display: block;
+}
+
+.app-footer {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+@media (max-width: 1150px) {
+    .dashboard-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .app-workspace {
+        padding: 22px;
+    }
+}
+
+@media (max-width: 760px) {
+    .app-shell {
+        flex-direction: column;
+    }
+
+    .app-sidebar {
+        flex-basis: auto;
+        width: 100%;
+        padding: 16px;
+    }
+
+    .app-workspace {
+        padding: 18px 14px;
+    }
+}
+
+@media (max-width: 420px) {
+    .dashboard-metrics {
+        grid-template-columns: 1fr;
+    }
+}
+
+.metric-card > .metric-label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.metric-card > .metric-value {
+    color: #215c40;
+    font-size: clamp(20px, 2vw, 29px);
+}
+
+.metric-card > .metric-note {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* Resumos: rótulos à esquerda, valores alinhados e notas em linha própria. */
+.summary-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: 20px; row-gap: 6px; padding: 13px 0; border-bottom: 1px solid var(--line); line-height: 1.45; }
+.summary-label { font-size: .875rem; color: var(--muted); overflow-wrap: anywhere; }
+.summary-value { font-size: 1rem; font-weight: 600; color: var(--green-dark); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.summary-note { display: block; font-size: .78rem; color: var(--muted); line-height: 1.55; margin-top: 8px; }
+.summary-row > .summary-note { grid-column: 1 / -1; margin: 0; }
+.summary-total { margin-top: 12px; padding: 16px 12px; background: #f3f8f5; border: 0; border-radius: 6px; }
+.summary-total > .summary-value { font-size: 1.15rem; }
+.summary-source { display: flex; flex-direction: column; gap: 6px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.summary-source-name { font-size: 1.05rem; font-weight: 600; color: var(--green-dark); }
+.summary-source-balance { font-size: .85rem; color: var(--muted); }
+.summary-euros { display: flex; flex-direction: column; gap: 8px; padding: 18px; margin-top: 18px; border-radius: 8px; background: var(--green-soft); }
+.summary-euros > .summary-value { font-size: 1.6rem; text-align: left; }
+.summary-euros > .summary-note { margin: 0; }
+.summary-rate { border-top: 1px solid #c9dfd1; border-bottom: 0; padding: 12px 0 0; margin-top: 4px; }
+.operation-summary { margin: 20px 0; }
+@media (max-width: 480px) { .summary-row { grid-template-columns: minmax(0, 1fr); gap: 5px; } .summary-row > .summary-value { text-align: left; white-space: normal; overflow-wrap: anywhere; } }
+
+/* Estrutura compartilhada de cadastros. */
+.crud-actions { margin-bottom: 1rem; }
+body.milheiro-app .crud-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+    width: 100%;
+    min-width: 0;
+}
+
+.crud-fields > * {
+    min-width: 0;
+    max-width: 100%;
+}
+.crud-footer { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }

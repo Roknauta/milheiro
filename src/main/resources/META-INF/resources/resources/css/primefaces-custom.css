@@ -1,0 +1,207 @@
+/* Ajustes visuais dos componentes PrimeFaces. */
+
+body.milheiro-app .app-sidebar .ui-panel, body.milheiro-app .app-sidebar .ui-panel-content, body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-content {
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+body.milheiro-app .app-sidebar .ui-panel-titlebar {
+    background: transparent;
+    border: 0;
+    color: #f0faf3;
+    font-size: 19px;
+    padding: 4px 12px 28px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header {
+    background: #1d4b3c;
+    border: 0;
+    border-radius: 8px;
+    margin: 12px 0 4px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header a {
+    color: #f3faf5;
+    padding: 14px 12px;
+    font-size: 14px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-menuitem-link {
+    border-radius: 6px;
+    padding: 13px 14px;
+    margin: 3px 0;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-menuitem-link .ui-menuitem-text, body.milheiro-app .app-sidebar .ui-panelmenu .ui-menuitem-link .ui-menuitem-icon {
+    color: #d4e9dc;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-menuitem-link:hover, body.milheiro-app .app-sidebar .ui-panelmenu .ui-menuitem-link:focus {
+    background: #2a5c48;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header .ui-icon {
+    color: #b5d5c1;
+}
+
+body.milheiro-app .ui-breadcrumb {
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+body.milheiro-app .ui-breadcrumb .ui-menuitem-link .ui-menuitem-icon {
+    color: var(--green);
+}
+
+body.milheiro-app .ui-panel {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+}
+
+body.milheiro-app .ui-panel .ui-panel-titlebar {
+    background: #f0f6f2;
+    color: var(--ink);
+    border-color: var(--line);
+    border-radius: 10px 10px 0 0;
+}
+
+body.milheiro-app .page-panel > .ui-panel-titlebar {
+    padding: 0 0 10px;
+    background: transparent;
+    border: 0;
+    font-size: 26px;
+}
+
+body.milheiro-app .page-panel > .ui-panel-content {
+    padding: 0;
+}
+
+body.milheiro-app .ui-button {
+    background: var(--green);
+    border-color: var(--green);
+    border-radius: 6px;
+}
+
+body.milheiro-app .ui-button.ui-state-hover {
+    background: #195e44;
+    border-color: #195e44;
+}
+
+body.milheiro-app .ui-button.ui-state-focus {
+    box-shadow: 0 0 0 2px #a8cfb9;
+}
+
+body.milheiro-app .ui-inputfield, body.milheiro-app .ui-selectonemenu {
+    border-color: #ccdcd1;
+    border-radius: 6px;
+    color: var(--ink);
+}
+
+body.milheiro-app .ui-inputfield.ui-state-focus, body.milheiro-app .ui-selectonemenu.ui-state-focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 1px #b8d9c6;
+}
+
+body.milheiro-app .ui-state-highlight {
+    background: var(--green-soft);
+    color: #175a3d;
+}
+
+body.milheiro-app .ui-datatable thead th {
+    background: #edf5ef;
+    color: #365a46;
+    border-color: var(--line);
+    font-size: 13px;
+}
+
+body.milheiro-app .ui-datatable .ui-datatable-data > tr > td {
+    border-color: #e6eee8;
+    padding: 15px 12px;
+}
+
+body.milheiro-app .ui-paginator {
+    background: #f6f9f7;
+    border-color: var(--line);
+}
+
+body.milheiro-app .ui-paginator .ui-paginator-page.ui-state-active {
+    background: var(--green);
+    color: white;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header.ui-state-active {
+    background: #1d4b3c;
+    border: 0;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header a {
+    display: block;
+    padding-left: 30px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-menuitem-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-menuitem-link .ui-menuitem-icon {
+    flex-shrink: 0;
+    margin: 0;
+}
+
+body.milheiro-app .page-panel > .ui-panel-content {
+    background: transparent;
+}
+
+body.milheiro-app .app-sidebar .ui-panel .ui-panel-titlebar {
+    background: transparent;
+    color: #f0faf3;
+    border: 0;
+    padding: 4px 12px 20px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    min-height: 46px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header a {
+    padding: 14px 10px;
+}
+
+body.milheiro-app .app-sidebar .ui-panelmenu .ui-panelmenu-header .ui-icon {
+    position: static;
+    margin: 0;
+}
+
+/* O painel do template não deve desenhar uma moldura ao redor da página. */
+body.milheiro-app .ui-panel.page-panel,
+body.milheiro-app .ui-panel.page-panel > .ui-panel-content {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+body.milheiro-app .ui-panel.transfer-summary { border: 1px solid #bed8c7; border-top: 3px solid var(--green); background: #fff; border-radius: 10px; }
+body.milheiro-app .ui-panel.transfer-summary > .ui-panel-titlebar { background: var(--green-soft); color: var(--green-dark); padding: 16px; }
+body.milheiro-app .ui-panel.transfer-summary > .ui-panel-content { padding: 18px; }
+
+body .ui-panel.crud-panel { margin-bottom: 1rem; min-width: 0; }
+body .ui-datepicker .ui-datepicker-buttonbar .ui-button { color: var(--green-dark); border-color: var(--line); }
+body .ui-datepicker select { color: var(--ink); background: var(--green-soft); border-color: var(--line); }
+
+body.milheiro-app .ui-chkbox .ui-chkbox-box.ui-state-active {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+}
+
+body.milheiro-app .ui-chkbox .ui-chkbox-box.ui-state-focus {
+    box-shadow: 0 0 0 2px #a8cfb9;
+}

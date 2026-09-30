@@ -1,0 +1,12 @@
+<ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui">
+    <cc:interface>
+
+
+    </cc:interface>
+    <cc:implementation>
+        <p:confirmDialog global="true" responsive="true" showEffect="none" hideEffect="none">
+            <p:commandButton value="#{msg['interface.voltar']}" type="button" styleClass="ui-confirmdialog-no"/>
+            <p:commandButton value="#{msg['interface.confirmar']}" type="button" styleClass="ui-confirmdialog-yes"/>
+        </p:confirmDialog>
+    </cc:implementation>
+</ui:component>

@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+                xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
+                template="/WEB-INF/crud.xhtml">
+    <ui:param name="pagina" value="#{msg['interface.programas']}"/>
+    <ui:param name="tituloFormulario" value="#{carteira.programa.id == null ? msg['interface.novo.programa'] : msg['interface.editar.programa']}"/>
+    <ui:define name="titulo"> #{msg['interface.programas.de.fidelidade']} </ui:define>
+    <ui:define name="descricao"> #{msg['interface.organize.os.programas.em.que.voce.acumula.pontos.e.milhas']} </ui:define>
+    <ui:param name="formularioId" value="cadastro"/>
+    <ui:define name="novo">
+        <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus" action="#{carteira.novoPrograma}" process="@this" update=":conteudoCrud" resetValues="true"/>
+    </ui:define>
+    <ui:define name="formulario">
+        <h:panelGroup styleClass="crud-fields" layout="block">
+            <m:inputText id="nome" label="#{msg['interface.nome.do.programa']}" value="#{carteira.programa.nome}" required="true" maxlength="80"/>
+            <m:selectOneMenu id="categoria" value="#{carteira.programa.categoria}" label="#{msg['interface.categoria']}">
+                <f:selectItem itemLabel="#{msg['interface.pontos']}" itemValue="PONTOS"/>
+                <f:selectItem itemLabel="#{msg['interface.milhas']}" itemValue="MILHAS"/>
+            </m:selectOneMenu>
+            <m:selectBooleanCheckbox id="ativo" value="#{carteira.programa.ativo}" itemLabel="#{msg['interface.ativo']}" label="#{msg['interface.disponivel.para.operacoes']}"/>
+        </h:panelGroup>
+    </ui:define>
+    <ui:define name="resultados">
+        <p:panel rendered="#{not carteira.editando and carteira.pesquisaRealizada}" style="margin-bottom: 1rem; min-width: 0;">
+            <h:outputText style="display: block; font-size: 1.1rem; font-weight: 600; margin: 1rem 0;" value="#{msg['interface.programas.cadastrados']}"/>
+            <p:dataTable id="registros" rendered="#{carteira.pesquisaRealizada}" showGridlines="true" value="#{carteira.programasEncontrados}"
+                         emptyMessage="#{msg['interface.nenhum.programa.cadastrado']}" reflow="true" var="item" paginatorPosition="bottom">
+                <p:column headerText="#{msg['interface.opcoes']}" style="width: 3rem; text-align: center">
+                    <m:rowActions id="acoes" edit="#{carteira.editarPrograma(item)}" remove="#{carteira.excluirPrograma(item)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
+                                  confirmHeader="#{msg['interface.excluir.registro']}" confirmMessage="#{msg['interface.confirma.esta.acao']}"/>
+                </p:column>
+                <t:column headerText="#{msg['interface.nome']}" sortBy="#{item.nome}" filterBy="#{item.nome}" filterMatchMode="contains" value="#{item.nome}"/>
+                <t:column headerText="#{msg['interface.categoria']}" value="#{item.categoria}"/>
+                <t:column headerText="#{msg['interface.status']}" value="#{item.ativo ? msg['interface.ativo'] : msg['interface.inativo.2']}"/>
+            </p:dataTable>
+        </p:panel>
+    </ui:define>
+    <ui:define name="salvar">
+        <p:commandButton value="#{msg['interface.salvar.programa']}" icon="pi pi-save" action="#{carteira.salvarPrograma}" update=":conteudoCrud" process="@form" id="salvar"/>
+    </ui:define>
+</ui:composition>
