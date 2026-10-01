@@ -12,6 +12,7 @@
             action="#{transferenciaController.novo}" process="@this" update=":conteudoCrud" resetValues="true"/>
     </ui:define>
     <ui:define name="formulario">
+        <ui:fragment rendered="#{transferenciaController.operacao.id == null}">
 <h:panelGroup
               styleClass="crud-fields" layout="block">
             <m:datePicker id="data" value="#{transferenciaController.operacao.data}" pattern="dd/MM/yyyy" required="true" label="#{msg['interface.data.2']}">
@@ -31,9 +32,9 @@
         <h:panelGroup
                       id="detalhes" layout="block">
             <ui:fragment>
-                <m:selectBooleanCheckbox id="comCarrinho" value="#{transferenciaController.operacao.comCarrinho}" itemLabel="#{msg['interface.transferencia.com.carrinho']}">
+                <m:toggleSwitch id="comCarrinho" value="#{transferenciaController.operacao.comCarrinho}" label="#{msg['interface.transferencia.com.carrinho']}">
                     <p:ajax listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:areaCarrinho :movimentos:resumoTransferencia" resetValues="true"/>
-                </m:selectBooleanCheckbox>
+                </m:toggleSwitch>
                 <h:panelGroup id="areaCarrinho" layout="block">
                     <ui:fragment rendered="#{transferenciaController.operacao.comCarrinho}">
                         <h:panelGroup layout="block" styleClass="crud-fields">
@@ -73,9 +74,9 @@
                             <ui:fragment rendered="#{transferenciaController.fatorCadastrado == null}">
                                 <h:panelGroup style="display: block; margin: 1rem 0;" layout="block"> #{msg['interface.nao.ha.fator.cadastrado.para.este.par.informe.a.proporcao.desta.operacao']} </h:panelGroup>
                             </ui:fragment>
-                            <m:selectBooleanCheckbox id="conversaoExcepcional" value="#{transferenciaController.conversaoExcepcional}" itemLabel="#{msg['interface.usar.conversao.excepcional.nesta.operacao']}" disabled="#{transferenciaController.fatorCadastrado == null}">
+                            <m:toggleSwitch id="conversaoExcepcional" value="#{transferenciaController.conversaoExcepcional}" label="#{msg['interface.usar.conversao.excepcional.nesta.operacao']}" disabled="#{transferenciaController.fatorCadastrado == null}">
                                 <p:ajax listener="#{transferenciaController.alternarConversaoExcepcional}" process="@this" update=":movimentos:conversao :movimentos:resumoTransferencia" resetValues="true"/>
-                            </m:selectBooleanCheckbox>
+                            </m:toggleSwitch>
                             <h:panelGroup layout="inline" style=" font-size: .85rem;"> #{msg['interface.alterar.estes.valores.nao.modifica.o.cadastro.nem.outras.operacoes.ao.desmarca']} </h:panelGroup>
                         </h:panelGroup>
                         <m:inputNumber id="fator" value="#{transferenciaController.operacao.pontosOrigem}" required="true" readonly="#{not transferenciaController.conversaoExcepcional}" label="#{msg['interface.proporcao.pontos.na.origem']}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." minValue="0.01" maxValue="999999999999">
@@ -163,6 +164,8 @@
                 <m:inputTextarea
                                  id="observacoes" value="#{transferenciaController.operacao.observacoes}" maxlength="500" rows="2" autoResize="true" label="#{msg['interface.observacoes']}"/>
     
+        </ui:fragment>
+        <ui:include src="/WEB-INF/operacoes/editar-transferencia.xhtml"/>
     </ui:define>
     <ui:define name="salvar">
         <p:commandButton id="salvar" value="#{msg['interface.salvar.operacao']}" icon="pi pi-save"
@@ -188,7 +191,7 @@
                 <t:column headerText="#{msg['interface.destino.2']}" value="#{item.destino.nome}"/>
                 <t:column headerText="#{msg['interface.quantidade.2']}" value="#{item.quantidade}" converter="quantidadeConverter"/>
                 <t:column headerText="#{msg['interface.valor.custo.proporcional.r']}" value="#{item.valor}" converter="monetarioConverter"/>
-                <t:column headerText="#{msg['operacao.desembolso']}" value="#{item.desembolso}" converter="monetarioConverter"/>
+                <t:column headerText="#{msg['transferencia.valor.adicional']}" value="#{item.valorAdicional}" converter="monetarioConverter"/>
                 <t:column headerText="#{msg['interface.observacoes']}" value="#{item.observacoes}"/>
             </p:dataTable>
         </p:panel>

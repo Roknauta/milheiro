@@ -13,20 +13,17 @@ import java.time.*;
 import java.time.format.*;
 import java.text.Normalizer;
 import java.util.*;
-import java.security.MessageDigest;
 
 @Service
 public class PlanilhaService {
 
     public static final int LIMITE_BYTES = 5 * 1024 * 1024;
     private static final String[] CABECALHO = {com.roknauta.milheiro.web.Textos.get("planilha.coluna.data"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.tipo"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.quantidade"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.destino"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.valor"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.observacoes")};
-    private final CarteiraService carteira;
-    private final OperacaoRepository operacoes;
-    private final ProgramaRepository programas;
+    private final OperacaoService carteira;
+    private final ProgramaFidelidadeRepository programas;
 
-    public PlanilhaService(CarteiraService carteira, OperacaoRepository operacoes, ProgramaRepository programas) {
+    public PlanilhaService(OperacaoService carteira, ProgramaFidelidadeRepository programas) {
         this.carteira = carteira;
-        this.operacoes = operacoes;
         this.programas = programas;
     }
 
@@ -36,12 +33,12 @@ public class PlanilhaService {
     }
 
 
-    public record Resultado(int importadas, int repetidas, int programasCriados, int transferencias) {
+    public record Resultado(int importadas, int programasCriados, int transferencias) {
 
     }
 
 
-    private record Movimento(Linha origem, Linha credito, String chave) {
+    private record Movimento(Linha origem, Linha credito) {
 
     }
 
@@ -180,21 +177,6 @@ public class PlanilhaService {
         }
     }
 
-    private static String hash(String s) {
-        try {
-            return HexFormat.of().formatHex(
-                MessageDigest.getInstance("SHA-256").digest(s.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static String identidade(Linha l) {
-        return String.join("|", l.data().toString(), l.tipo().name(),
-            l.quantidade().stripTrailingZeros().toPlainString(), nome(l.programa()),
-            l.valor().stripTrailingZeros().toPlainString(), normal(l.observacoes()));
-    }
-
     private List<Movimento> movimentos(List<Linha> linhas) {
         Map<Integer, Linha> pares = new HashMap<>();
         Set<Integer> creditos = new HashSet<>();
@@ -219,14 +201,11 @@ public class PlanilhaService {
                 pares.put(l.numero(), c);
             }
         List<Movimento> result = new ArrayList<>();
-        Map<String, Integer> ocorrencias = new HashMap<>();
         for (Linha l : linhas) {
             if (creditos.contains(l.numero()))
                 continue;
             Linha c = pares.get(l.numero());
-            String base = identidade(l) + (c == null ? "" : "|credito|" + identidade(c));
-            int ordinal = ocorrencias.merge(base, 1, Integer::sum);
-            result.add(new Movimento(l, c, hash(base + "|" + ordinal)));
+            result.add(new Movimento(l, c));
         }
         result.sort(
             Comparator.comparing((Movimento m) -> m.origem().data()).thenComparingInt(m -> m.origem().numero()));
@@ -237,27 +216,25 @@ public class PlanilhaService {
     public Resultado importar(byte[] bytes) {
         List<Movimento> movimentos = movimentos(ler(bytes));
         programas.bloquearTodos();
-        Map<String, Programa> cadastro = new HashMap<>();
-        for (Programa p : carteira.programas()) {
+        Map<String, ProgramaFidelidade> cadastro = new HashMap<>();
+        for (ProgramaFidelidade p : carteira.programas()) {
             if (cadastro.put(nome(p.getNome()), p) != null)
                 throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
                     "mensagem.ha.programas.equivalentes.no.cadastro.unifique.os.nomes.antes.de.importar"));
         }
-        int criados = 0, salvos = 0, repetidos = 0, transferencias = 0;
+        carteira.limparHistoricoParaImportacao();
+        int criados = 0, salvos = 0, transferencias = 0;
         for (Movimento m : movimentos) {
-            if (operacoes.existsByChaveImportacao(m.chave())) {
-                repetidos++;
-                continue;
-            }
             Linha l = m.origem();
             List<String> nomes =
                 m.credito() == null ? List.of(l.programa()) : List.of(l.programa(), m.credito().programa());
             for (String n : nomes)
                 if (!cadastro.containsKey(nome(n))) {
-                    Programa p = new Programa();
-                    p.setCategoria(CategoriaPrograma.PONTOS);
-                    p.setNome(n);
-                    cadastro.put(nome(n), carteira.salvarPrograma(p));
+                    ProgramaFidelidade p = ProgramaFidelidade.builder()
+                        .categoria(CategoriaProgramaFidelidade.PONTOS)
+                        .nome(n)
+                        .build();
+                    cadastro.put(nome(n), carteira.salvarProgramaFidelidade(p));
                     criados++;
                 }
             com.roknauta.milheiro.dto.OperacaoFormulario o = new com.roknauta.milheiro.dto.OperacaoFormulario();
@@ -265,17 +242,16 @@ public class PlanilhaService {
             o.setData(l.data());
             o.setQuantidade(l.quantidade());
             o.setObservacoes(l.observacoes());
-            o.setChaveImportacao(m.chave());
             Long destino = null;
             if (l.tipo() == TipoOperacao.RESGATE)
-                o.setTaxas(l.valor());
+                o.setTaxas(Dinheiro.de(l.valor()));
             else if (m.credito() != null) {
                 destino = cadastro.get(nome(m.credito().programa())).getId();
                 // A razão efetiva preserva exatamente o crédito registrado, incluindo bônus.
                 o.setPontosOrigem(l.quantidade());
                 o.setPontosDestino(m.credito().quantidade());
                 o.setBonus(BigDecimal.ZERO);
-                o.setTaxas(l.valor());
+                o.setTaxas(Dinheiro.de(l.valor()));
                 transferencias++;
                 String obs = l.observacoes() + " | Crédito: " + m.credito().observacoes();
                 if (obs.length() > 500)
@@ -283,16 +259,31 @@ public class PlanilhaService {
                         "mensagem.observacoes.combinadas.da.transferencia.excedem.500.caracteres"));
                 o.setObservacoes(obs);
             } else
-                o.setValor(l.valor());
+                o.setValor(Dinheiro.de(l.valor()));
             try {
-                Operacao salva = carteira.salvarOperacao(o, cadastro.get(nome(l.programa())).getId(), destino);
+                Operacao salva = importarOperacao(o, cadastro.get(nome(l.programa())).getId(), destino);
                 if (o.isTransferencia()) carteira.confirmarTransferenciaImportada(salva.getId());
             } catch (IllegalArgumentException e) {
                 throw erro(l.numero(), e.getMessage());
             }
             salvos++;
         }
-        return new Resultado(salvos, repetidos, criados, transferencias);
+        carteira.atualizarConsolidados();
+        return new Resultado(salvos, criados, transferencias);
+    }
+
+    private Operacao importarOperacao(com.roknauta.milheiro.dto.OperacaoFormulario formulario,
+        Long programaId, Long destinoId) {
+        Map<TipoOperacao, java.util.function.Supplier<Operacao>> importadores = new EnumMap<>(TipoOperacao.class);
+        importadores.put(TipoOperacao.ACUMULO, () -> carteira.salvarAcumulo(formulario, programaId));
+        importadores.put(TipoOperacao.VENDA, () -> carteira.salvarVenda(formulario, programaId));
+        importadores.put(TipoOperacao.RESGATE, () -> carteira.salvarResgate(formulario, programaId));
+        importadores.put(TipoOperacao.TRANSFERENCIA, () -> carteira.salvarTransferencia(formulario, programaId, destinoId));
+        var importador = importadores.get(formulario.getTipo());
+        if (importador == null)
+            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                "mensagem.tipo.invalido.use.acumulo.venda.resgate.ou.transferencia"));
+        return importador.get();
     }
 
     public byte[] modelo() {
@@ -342,9 +333,9 @@ public class PlanilhaService {
                 com.roknauta.milheiro.web.Textos.get(
                     "mensagem.o.custo.do.credito.de.transferencia.e.recalculado.pelo.acumulado.historico.o.val"),
                 com.roknauta.milheiro.web.Textos.get(
-                    "mensagem.programas.ausentes.serao.criados.na.categoria.pontos.nenhum.dado.existente.sera."),
+                    "planilha.programas.preservados"),
                 com.roknauta.milheiro.web.Textos.get(
-                    "mensagem.linhas.identicas.ja.importadas.sao.ignoradas.alterar.uma.linha.importada.nao.atu")};
+                    "planilha.importacao.substituicao")};
             for (int i = 0; i < notas.length; i++)
                 ajuda.createRow(i).createCell(0).setCellValue(notas[i]);
             wb.write(out);

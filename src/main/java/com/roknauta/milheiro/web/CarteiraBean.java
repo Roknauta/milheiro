@@ -1,5 +1,6 @@
 package com.roknauta.milheiro.web;
 
+import com.roknauta.milheiro.domain.Dinheiro;
 import com.roknauta.milheiro.domain.*;
 import com.roknauta.milheiro.service.*;
 import jakarta.annotation.PostConstruct;
@@ -20,7 +21,7 @@ import java.util.*;
 @Setter
 public class CarteiraBean implements Serializable {
 
-    private final CarteiraService service;
+    private final OperacaoService service;
     private boolean pesquisaRealizada;
     private boolean editando;
 
@@ -41,11 +42,6 @@ public class CarteiraBean implements Serializable {
         return texto != null && texto.toLowerCase(Locale.ROOT).contains(filtroAplicado);
     }
 
-    public List<Programa> getProgramasEncontrados() {
-        return pesquisaRealizada ? programas.stream()
-            .filter(p -> corresponde(p.getNome()) || corresponde(p.getCategoria() == null ? null : p.getCategoria().name())).toList() : List.of();
-    }
-
     public List<FatorConversao> getFatoresEncontrados() {
         return pesquisaRealizada
             ? fatores.stream()
@@ -53,16 +49,12 @@ public class CarteiraBean implements Serializable {
             : List.of();
     }
 
-    private Programa programa = new Programa();
     private FatorConversao fator = new FatorConversao();
-    private List<Consolidado> consolidados;
     private Long origemFator, destinoFator;
-    private List<Programa> programas;
+    private List<ProgramaFidelidade> programas;
     private List<FatorConversao> fatores;
-    private List<Operacao> operacoes;
-    private List<Resumo> resumos;
 
-    public CarteiraBean(CarteiraService service) {
+    public CarteiraBean(OperacaoService service) {
         this.service = service;
     }
 
@@ -70,9 +62,6 @@ public class CarteiraBean implements Serializable {
     public void carregar() {
         programas = service.programas();
         fatores = service.fatores();
-        operacoes = service.operacoes();
-        resumos = service.resumos();
-        consolidados = service.consolidados();
     }
 
     private void executar(Runnable acao) {
@@ -93,33 +82,6 @@ public class CarteiraBean implements Serializable {
 
     private void mensagem(FacesMessage.Severity nivel, String texto) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(nivel, texto, null));
-    }
-
-    public void salvarPrograma() {
-        executar(() -> {
-            service.salvarPrograma(programa);
-            novoPrograma();
-            editando = false;
-        });
-    }
-
-    public void novoPrograma() {
-        editando = true;
-        programa = new Programa();
-    }
-
-    public void editarPrograma(Programa p) {
-        editando = true;
-        programa = new Programa();
-        org.springframework.beans.BeanUtils.copyProperties(p, programa);
-    }
-
-    public void excluirPrograma(Programa p) {
-        executar(() -> {
-            service.excluirPrograma(p.getId());
-            novoPrograma();
-            editando = false;
-        });
     }
 
     public void salvarFator() {
@@ -153,24 +115,8 @@ public class CarteiraBean implements Serializable {
         });
     }
 
-    public List<Programa> getProgramasAtivos() {
-        return programas.stream().filter(Programa::isAtivo).toList();
-    }
-
-    public BigDecimal getSaldoTotal() {
-        return consolidados.stream().map(Consolidado::getSaldo).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public BigDecimal getDesembolso() {
-        return operacoes.stream().map(Operacao::getDesembolsoEfetivo).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public BigDecimal getReceita() {
-        return operacoes.stream().map(Operacao::getReceitaEfetiva).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public BigDecimal getResultado() {
-        return getReceita().subtract(getDesembolso());
+    public List<ProgramaFidelidade> getProgramasAtivos() {
+        return programas.stream().filter(ProgramaFidelidade::isAtivo).toList();
     }
 
 }

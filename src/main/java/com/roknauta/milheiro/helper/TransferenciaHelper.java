@@ -1,5 +1,6 @@
 package com.roknauta.milheiro.helper;
 
+import com.roknauta.milheiro.domain.Dinheiro;
 import com.roknauta.milheiro.dto.*;
 import com.roknauta.milheiro.service.*;
 import com.roknauta.milheiro.web.Textos;
@@ -37,14 +38,15 @@ public final class TransferenciaHelper {
             : debito.multiply(new BigDecimal("100")).divide(origem.getAcumulado(), 12, RoundingMode.HALF_UP);
         BigDecimal milheiro = creditosCarrinho.signum() == 0 ? null
             : compra.multiply(new BigDecimal("1000")).divide(creditosCarrinho, 12, RoundingMode.HALF_UP);
-        BigDecimal desembolso = compra.add(p.taxas());
+        BigDecimal valorAdicional = compra.add(p.taxas());
         return new ResultadoTransferencia(total, debito, base, creditos.subtract(base), creditos,
-            comprados, creditosCarrinho, milheiro, custo, custo.add(desembolso), desembolso,
+            comprados, creditosCarrinho, Dinheiro.de(milheiro), Dinheiro.de(custo),
+            Dinheiro.de(custo.add(valorAdicional)), Dinheiro.de(valorAdicional),
             percentual, debito.compareTo(origem.getSaldo()) > 0);
     }
 
-    public static BigDecimal custoPorEuro(BigDecimal custo, BigDecimal euros) {
+    public static Dinheiro custoPorEuro(BigDecimal custo, BigDecimal euros) {
         return custo == null || euros == null || euros.signum() <= 0 ? null
-            : custo.divide(euros, 6, RoundingMode.HALF_UP);
+            : Dinheiro.de(custo.divide(euros, 6, RoundingMode.HALF_UP));
     }
 }

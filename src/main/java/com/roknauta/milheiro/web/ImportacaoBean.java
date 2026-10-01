@@ -35,8 +35,7 @@ public class ImportacaoBean {
             try (InputStream in = arquivo.getInputStream()) {
                 var r = service.importar(in.readNBytes(PlanilhaService.LIMITE_BYTES + 1));
                 resultado = r.importadas() + " " + com.roknauta.milheiro.web.Textos.get(
-                    "interface.operacoes.importadas") + " " + r.repetidas() + " " + com.roknauta.milheiro.web.Textos.get(
-                    "interface.ja.importadas.ignoradas") + " " + r.programasCriados() + " " + com.roknauta.milheiro.web.Textos.get(
+                    "interface.operacoes.importadas") + " " + r.programasCriados() + " " + com.roknauta.milheiro.web.Textos.get(
                     "interface.programas.criados.e") + " " + r.transferencias() + " " + com.roknauta.milheiro.web.Textos.get(
                     "interface.transferencias.consolidadas");
             }

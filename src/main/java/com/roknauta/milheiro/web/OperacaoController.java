@@ -2,7 +2,7 @@ package com.roknauta.milheiro.web;
 
 import com.roknauta.milheiro.domain.*;
 import com.roknauta.milheiro.dto.OperacaoFormulario;
-import com.roknauta.milheiro.service.CarteiraService;
+import com.roknauta.milheiro.service.OperacaoService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -14,11 +14,11 @@ import java.util.*;
 /** Fluxo comum de consulta, inclusão e mudança de status dos lançamentos. */
 @Getter
 public abstract class OperacaoController<T extends Operacao> implements Serializable {
-    protected final CarteiraService service;
+    protected final OperacaoService service;
     private final TipoOperacao tipo;
     private final Class<T> entidade;
     protected OperacaoFormulario operacao;
-    protected List<Programa> programas = List.of();
+    protected List<ProgramaFidelidade> programas = List.of();
     protected List<Operacao> historico = List.of();
     private List<T> registros = List.of();
     private boolean pesquisaRealizada;
@@ -29,7 +29,7 @@ public abstract class OperacaoController<T extends Operacao> implements Serializ
     @Setter
     protected Long programaOperacao;
 
-    protected OperacaoController(CarteiraService service, TipoOperacao tipo, Class<T> entidade) {
+    protected OperacaoController(OperacaoService service, TipoOperacao tipo, Class<T> entidade) {
         this.service = service;
         this.tipo = tipo;
         this.entidade = entidade;
@@ -67,8 +67,8 @@ public abstract class OperacaoController<T extends Operacao> implements Serializ
         return texto != null && texto.toLowerCase(Locale.ROOT).contains(filtroAplicado);
     }
 
-    public List<Programa> getProgramasAtivos() {
-        return programas.stream().filter(Programa::isAtivo).toList();
+    public List<ProgramaFidelidade> getProgramasAtivos() {
+        return programas.stream().filter(ProgramaFidelidade::isAtivo).toList();
     }
 
     public void novo() {
@@ -79,13 +79,37 @@ public abstract class OperacaoController<T extends Operacao> implements Serializ
         editando = true;
     }
 
+    public void editar(T item) {
+        operacao = new OperacaoFormulario();
+        operacao.setId(item.getId());
+        operacao.setVersao(item.getVersao());
+        operacao.setTipo(item.getTipo());
+        operacao.setData(item.getData());
+        operacao.setQuantidade(item.getQuantidade());
+        operacao.setValor(item.getValor());
+        operacao.setObservacoes(item.getObservacoes());
+        programaOperacao = item.getPrograma().getId();
+        prepararEdicao(item);
+        editando = true;
+    }
+
+    protected void prepararEdicao(T item) { }
+
+    public void excluir(T item) {
+        executar(() -> service.excluirOperacao(item.getId(), item.getVersao()));
+    }
+
+    public void cancelar(T item) {
+        executar(() -> service.cancelarOperacao(item.getId(), item.getVersao()));
+    }
+
     protected void limparEspecificos() { }
-    protected Long destinoParaSalvar() { return null; }
+    protected abstract T salvarOperacao();
 
     public void salvar() {
         executar(() -> {
             operacao.setTipo(tipo);
-            service.salvarOperacao(operacao, programaOperacao, destinoParaSalvar());
+            salvarOperacao();
             novo();
             editando = false;
         });

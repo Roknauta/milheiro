@@ -1,10 +1,11 @@
 package com.roknauta.milheiro.web;
 
 import com.roknauta.milheiro.domain.FatorConversao;
+import com.roknauta.milheiro.domain.Dinheiro;
 import com.roknauta.milheiro.dto.*;
 import com.roknauta.milheiro.helper.TransferenciaHelper;
-import com.roknauta.milheiro.domain.Programa;
-import com.roknauta.milheiro.service.CarteiraService;
+import com.roknauta.milheiro.domain.ProgramaFidelidade;
+import com.roknauta.milheiro.service.OperacaoService;
 import com.roknauta.milheiro.service.Resumo;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -24,32 +25,35 @@ import java.util.Objects;
 @Setter
 public class CalculadoraBean implements Serializable {
 
-    private final CarteiraService service;
-    private List<Programa> programas;
+    private final OperacaoService service;
+    private List<ProgramaFidelidade> programas;
     private List<Resumo> resumos;
     private Long origemId, destinoId;
     private String fator;
     private BigDecimal pontos, bonus = BigDecimal.ZERO;
     private boolean comCarrinho;
-    private BigDecimal pontosDebitarSaldo, valorCarrinho;
+    private BigDecimal pontosDebitarSaldo;
+    private Dinheiro valorCarrinho;
     private BigDecimal pontosCarrinho;
-    private BigDecimal totalTransferencia, pontosCarrinhoCreditar, milheiroCarrinho;
-    private BigDecimal pontosTransferir, pontosCreditar, gastoPercentual, valorDestino, percentual;
+    private BigDecimal totalTransferencia, pontosCarrinhoCreditar;
+    private Dinheiro milheiroCarrinho;
+    private BigDecimal pontosTransferir, pontosCreditar, percentual;
+    private Dinheiro gastoPercentual, valorDestino;
     private String orientacao, aviso;
     private boolean calculado;
     private boolean fatorDoCadastro;
 
-    public CalculadoraBean(CarteiraService service) {
+    public CalculadoraBean(OperacaoService service) {
         this.service = service;
     }
 
     @PostConstruct
     public void carregar() {
-        programas = service.programas().stream().filter(Programa::isAtivo).toList();
+        programas = service.programas().stream().filter(ProgramaFidelidade::isAtivo).toList();
         resumos = service.resumos();
     }
 
-    public BigDecimal getEurosGerados() {
+    public Dinheiro getEurosGerados() {
         return calculado && programas.stream().anyMatch(p -> Objects.equals(p.getId(), destinoId) && p.isAll())
             ? com.roknauta.milheiro.service.Calculos.eurosAll(pontosCreditar)
             : null;
@@ -93,8 +97,10 @@ public class CalculadoraBean implements Serializable {
 
     public void recalcular(boolean receber) {
         calculado = false;
-        pontosCarrinho = totalTransferencia = pontosCarrinhoCreditar = milheiroCarrinho = null;
-        pontosTransferir = pontosCreditar = gastoPercentual = valorDestino = percentual = null;
+        pontosCarrinho = totalTransferencia = pontosCarrinhoCreditar = null;
+        milheiroCarrinho = null;
+        pontosTransferir = pontosCreditar = percentual = null;
+        gastoPercentual = valorDestino = null;
         aviso = null;
         orientacao = com.roknauta.milheiro.web.Textos.get("interface.selecione.origem.e.destino.para.comecar");
         Resumo origem = getOrigem();
@@ -151,7 +157,7 @@ public class CalculadoraBean implements Serializable {
         }
     }
 
-    public BigDecimal getCustoPorEuro() {
+    public Dinheiro getCustoPorEuro() {
         BigDecimal euros = getEurosGerados();
         return TransferenciaHelper.custoPorEuro(valorDestino, euros);
     }

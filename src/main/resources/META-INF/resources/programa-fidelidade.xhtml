@@ -1,31 +1,32 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
                 xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
                 template="/WEB-INF/crud.xhtml">
+    <ui:param name="controladorCrud" value="#{programaFidelidadeController}"/>
     <ui:param name="pagina" value="#{msg['interface.programas']}"/>
-    <ui:param name="tituloFormulario" value="#{carteira.programa.id == null ? msg['interface.novo.programa'] : msg['interface.editar.programa']}"/>
+    <ui:param name="tituloFormulario" value="#{programaFidelidadeController.programaFidelidade.id == null ? msg['interface.novo.programa'] : msg['interface.editar.programa']}"/>
     <ui:define name="titulo"> #{msg['interface.programas.de.fidelidade']} </ui:define>
     <ui:define name="descricao"> #{msg['interface.organize.os.programas.em.que.voce.acumula.pontos.e.milhas']} </ui:define>
     <ui:param name="formularioId" value="cadastro"/>
     <ui:define name="novo">
-        <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus" action="#{carteira.novoPrograma}" process="@this" update=":conteudoCrud" resetValues="true"/>
+        <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus" action="#{programaFidelidadeController.novo}" process="@this" update=":conteudoCrud" resetValues="true"/>
     </ui:define>
     <ui:define name="formulario">
         <h:panelGroup styleClass="crud-fields" layout="block">
-            <m:inputText id="nome" label="#{msg['interface.nome.do.programa']}" value="#{carteira.programa.nome}" required="true" maxlength="80"/>
-            <m:selectOneMenu id="categoria" value="#{carteira.programa.categoria}" label="#{msg['interface.categoria']}">
+            <m:inputText id="nome" label="#{msg['interface.nome.do.programa']}" value="#{programaFidelidadeController.programaFidelidade.nome}" required="true" maxlength="80"/>
+            <m:selectOneMenu id="categoria" value="#{programaFidelidadeController.programaFidelidade.categoria}" label="#{msg['interface.categoria']}">
                 <f:selectItem itemLabel="#{msg['interface.pontos']}" itemValue="PONTOS"/>
                 <f:selectItem itemLabel="#{msg['interface.milhas']}" itemValue="MILHAS"/>
             </m:selectOneMenu>
-            <m:selectBooleanCheckbox id="ativo" value="#{carteira.programa.ativo}" itemLabel="#{msg['interface.ativo']}" label="#{msg['interface.disponivel.para.operacoes']}"/>
+            <m:toggleSwitch id="ativo" value="#{programaFidelidadeController.programaFidelidade.ativo}" label="#{msg['interface.ativo']}"/>
         </h:panelGroup>
     </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{not carteira.editando and carteira.pesquisaRealizada}" style="margin-bottom: 1rem; min-width: 0;">
+        <p:panel rendered="#{not programaFidelidadeController.editando and programaFidelidadeController.pesquisaRealizada}" style="margin-bottom: 1rem; min-width: 0;">
             <h:outputText style="display: block; font-size: 1.1rem; font-weight: 600; margin: 1rem 0;" value="#{msg['interface.programas.cadastrados']}"/>
-            <p:dataTable id="registros" rendered="#{carteira.pesquisaRealizada}" showGridlines="true" value="#{carteira.programasEncontrados}"
+            <p:dataTable id="registros" rendered="#{programaFidelidadeController.pesquisaRealizada}" showGridlines="true" value="#{programaFidelidadeController.programasEncontrados}"
                          emptyMessage="#{msg['interface.nenhum.programa.cadastrado']}" reflow="true" var="item" paginatorPosition="bottom">
                 <p:column headerText="#{msg['interface.opcoes']}" style="width: 3rem; text-align: center">
-                    <m:rowActions id="acoes" edit="#{carteira.editarPrograma(item)}" remove="#{carteira.excluirPrograma(item)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
+                    <m:rowActions id="acoes" edit="#{programaFidelidadeController.editar(item)}" remove="#{programaFidelidadeController.excluir(item)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
                                   confirmHeader="#{msg['interface.excluir.registro']}" confirmMessage="#{msg['interface.confirma.esta.acao']}"/>
                 </p:column>
                 <t:column headerText="#{msg['interface.nome']}" sortBy="#{item.nome}" filterBy="#{item.nome}" filterMatchMode="contains" value="#{item.nome}"/>
@@ -35,6 +36,6 @@
         </p:panel>
     </ui:define>
     <ui:define name="salvar">
-        <p:commandButton value="#{msg['interface.salvar.programa']}" icon="pi pi-save" action="#{carteira.salvarPrograma}" update=":conteudoCrud" process="@form" id="salvar"/>
+        <p:commandButton value="#{msg['interface.salvar.programa']}" icon="pi pi-save" action="#{programaFidelidadeController.salvar}" update=":conteudoCrud" process="@form" id="salvar"/>
     </ui:define>
 </ui:composition>

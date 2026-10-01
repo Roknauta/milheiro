@@ -7,7 +7,7 @@
         <p:panel xmlns:p="http://primefaces.org/ui" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough" header="#{msg['interface.menu.principal']}">
             <p:panelMenu multiple="true">
                 <p:submenu label="#{msg['interface.milheiro']}" expanded="true">
-                    <p:menuitem value="#{msg['interface.visao.geral']}" outcome="/index" icon="pi pi-chart-bar"/>
+                    <p:menuitem value="#{msg['interface.dashboard']}" outcome="/dashboard" icon="pi pi-chart-bar"/>
                     <p:menuitem value="#{msg['interface.importar.de.planilha']}" outcome="/importar" icon="pi pi-file-excel"/>
                 </p:submenu>
                 <p:submenu label="#{msg['operacao.menu']}" expanded="true">
@@ -22,7 +22,7 @@
                     <p:menuitem value="#{msg['interface.receber.2']}" outcome="/receber" icon="pi pi-download"/>
                 </p:submenu>
                 <p:submenu label="#{msg['interface.cadastros']}" expanded="true">
-                    <p:menuitem value="#{msg['interface.programas.de.fidelidade']}" outcome="/programas" icon="pi pi-wallet"/>
+                    <p:menuitem value="#{msg['interface.programas.de.fidelidade']}" outcome="/programa-fidelidade" icon="pi pi-wallet"/>
                     <p:menuitem value="#{msg['interface.fatores.de.conversao']}" outcome="/fatores" icon="pi pi-percentage"/>
                 </p:submenu>
             </p:panelMenu>

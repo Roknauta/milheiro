@@ -1,0 +1,26 @@
+<ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite"
+    xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html">
+    <cc:interface>
+        <cc:attribute name="value" required="true"/>
+        <cc:attribute name="label" default=""/>
+        <cc:attribute name="required" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="disabled" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="readonly" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="requiredMessage" default="#{msg['componente.obrigatorio']}"/>
+        <cc:editableValueHolder name="input" targets="input"/>
+        <cc:clientBehavior name="valueChange" event="change" targets="input" default="true"/>
+        <cc:clientBehavior name="change" event="change" targets="input"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:panelGroup layout="block" styleClass="toggle-field">
+            <p:panelGrid columns="2" layout="tabular" styleClass="toggle-field-grid ui-panelgrid-blank"
+                columnClasses="toggle-label-column,toggle-switch-column">
+                <p:outputLabel for="input" value="#{cc.attrs.label}: "/>
+                <p:toggleSwitch id="input" value="#{cc.attrs.value}"
+                    disabled="#{cc.attrs.disabled or cc.attrs.readonly}"
+                    required="#{cc.attrs.required}" requiredMessage="#{cc.attrs.requiredMessage}"/>
+            </p:panelGrid>
+            <p:message for="input"/>
+        </h:panelGroup>
+    </cc:implementation>
+</ui:component>

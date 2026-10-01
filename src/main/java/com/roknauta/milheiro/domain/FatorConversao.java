@@ -1,5 +1,9 @@
 package com.roknauta.milheiro.domain;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,17 +14,18 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"origem_id", "destino_id"}))
-public class FatorConversao {
+@SuperBuilder
+@NoArgsConstructor
+public class FatorConversao extends EntidadeBase {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @ManyToOne(optional = false)
-    private Programa origem;
+    private ProgramaFidelidade origem;
     @ManyToOne(optional = false)
-    private Programa destino;
+    private ProgramaFidelidade destino;
     @Column(nullable = false, precision = 24, scale = 10)
+    @Builder.Default
     private BigDecimal pontosOrigem = BigDecimal.ONE;
     @Column(nullable = false, precision = 24, scale = 10)
+    @Builder.Default
     private BigDecimal pontosDestino = BigDecimal.ONE;
 }

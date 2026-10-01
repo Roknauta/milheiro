@@ -197,3 +197,40 @@ body.milheiro-app .crud-fields {
     max-width: 100%;
 }
 .crud-footer { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+
+/* Campos booleanos: rótulo antes do interruptor. */
+.toggle-field {
+    min-width: 0;
+}
+
+
+body.milheiro-app .dashboard-charts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    min-width: 0;
+}
+
+.dashboard-chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 340px;
+    padding: 24px;
+    color: var(--muted);
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    body.milheiro-app .dashboard-charts { grid-template-columns: minmax(0, 1fr); }
+}
+
+body.milheiro-app .dashboard-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 600px) {
+    body.milheiro-app .dashboard-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

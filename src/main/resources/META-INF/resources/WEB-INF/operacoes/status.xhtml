@@ -1,21 +1,20 @@
-<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
-    xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
-    xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf">
-                        <p:menuButton id="status" icon="pi pi-ellipsis-v" title="#{msg['operacao.status.alterar']}">
-                            <p:menuitem value="#{msg['operacao.status.confirmar']}" icon="pi pi-check"
-                                        rendered="#{item.status != 'CONFIRMADO'}" action="#{controladorCrud.alterarStatus(item, 'CONFIRMADO')}"
-                                        process="@this" update="@form">
-                                <p:confirm header="#{msg['operacao.status.alterar']}" message="#{msg['operacao.status.confirmacao']}"/>
-                            </p:menuitem>
-                            <p:menuitem value="#{msg['operacao.status.pendenciar']}" icon="pi pi-clock"
-                                        rendered="#{item.status != 'PENDENTE'}" action="#{controladorCrud.alterarStatus(item, 'PENDENTE')}"
-                                        process="@this" update="@form">
-                                <p:confirm header="#{msg['operacao.status.alterar']}" message="#{msg['operacao.status.confirmacao']}"/>
-                            </p:menuitem>
-                            <p:menuitem value="#{msg['operacao.status.cancelar']}" icon="pi pi-times"
-                                        rendered="#{item.status != 'CANCELADO'}" action="#{controladorCrud.alterarStatus(item, 'CANCELADO')}"
-                                        process="@this" update="@form">
-                                <p:confirm header="#{msg['operacao.status.alterar']}" message="#{msg['operacao.status.confirmacao']}"/>
-                            </p:menuitem>
-                        </p:menuButton>
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui">
+    <p:menuButton id="acoes" icon="pi pi-ellipsis-v" title="#{msg['interface.opcoes']}">
+        <p:menuitem value="#{msg['interface.editar']}" icon="pi pi-pencil"
+                    action="#{controladorCrud.editar(item)}" process="@this" update=":conteudoCrud" resetValues="true"/>
+        <p:menuitem value="#{msg['interface.excluir']}" icon="pi pi-trash"
+                    action="#{controladorCrud.excluir(item)}" process="@this" update=":conteudoCrud">
+            <p:confirm header="#{msg['interface.excluir.registro']}" message="#{msg['operacao.excluir.confirmacao']}"/>
+        </p:menuitem>
+        <p:menuitem value="#{msg['operacao.status.cancelar']}" icon="pi pi-times"
+                    disabled="#{item.cancelada}" action="#{controladorCrud.cancelar(item)}"
+                    process="@this" update=":conteudoCrud">
+            <p:confirm header="#{msg['operacao.status.cancelar']}" message="#{msg['operacao.cancelar.confirmacao']}"/>
+        </p:menuitem>
+        <p:menuitem value="#{msg['operacao.status.confirmar']}" icon="pi pi-check"
+                    rendered="#{item.tipo == 'ACUMULO'}" disabled="#{item.confirmada}"
+                    action="#{controladorCrud.confirmar(item)}" process="@this" update=":conteudoCrud">
+            <p:confirm header="#{msg['operacao.status.confirmar']}" message="#{msg['operacao.status.confirmacao']}"/>
+        </p:menuitem>
+    </p:menuButton>
 </ui:composition>

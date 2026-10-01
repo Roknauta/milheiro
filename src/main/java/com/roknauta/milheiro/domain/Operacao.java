@@ -1,5 +1,9 @@
 package com.roknauta.milheiro.domain;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,36 +14,37 @@ import java.time.LocalDate;
 /** Atributos comuns dos lançamentos efetivos; parâmetros de simulação ficam no formulário. */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "tipo", discriminatorType = DiscriminatorType.STRING, length = 31)
 @Getter
 @Setter
-public abstract class Operacao {
+@SuperBuilder
+@NoArgsConstructor
+public abstract class Operacao extends EntidadeBase {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    // Protege alterações de status e estornos contra atualizações concorrentes.
     @Version
     private Long versao;
-    @Column(unique = true, length = 64)
-    private String chaveImportacao;
     @Column(nullable = false)
+    @Builder.Default
     private LocalDate data = LocalDate.now();
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Setter(lombok.AccessLevel.PROTECTED)
-    private TipoOperacao tipo;
-    @Enumerated(EnumType.STRING)
+    @Builder.Default
     private StatusOperacao status = StatusOperacao.CONFIRMADO;
     @ManyToOne(optional = false)
-    private Programa programa;
+    private ProgramaFidelidade programa;
     @Column(nullable = false, precision = 24, scale = 2)
+    @Builder.Default
     private BigDecimal quantidade = BigDecimal.ZERO;
     @Column(nullable = false, precision = 24, scale = 2)
-    private BigDecimal valor = BigDecimal.ZERO;
-    // Nullable para identificar registros anteriores à migração.
-    @Column(precision = 24, scale = 2)
-    private BigDecimal desembolso = BigDecimal.ZERO;
+    @Builder.Default
+    @Convert(converter = com.roknauta.milheiro.persistence.DinheiroPersistenceConverter.class)
+    private Dinheiro valor = Dinheiro.ZERO;
     @Column(length = 500)
     private String observacoes;
+
+    /** O tipo é determinado pela entidade concreta, sem estado duplicado. */
+    @Transient
+    public abstract TipoOperacao getTipo();
 
     public boolean isConfirmada() {
         return status == StatusOperacao.CONFIRMADO;
@@ -50,14 +55,14 @@ public abstract class Operacao {
     }
 
     public boolean isTransferencia() {
-        return tipo == TipoOperacao.TRANSFERENCIA;
+        return getTipo() == TipoOperacao.TRANSFERENCIA;
     }
 
     public boolean isCreditoTransferencia() {
         return getTransferenciaOrigem() != null;
     }
 
-    public Programa getDestino() {
+    public ProgramaFidelidade getDestino() {
         return null;
     }
 
@@ -70,24 +75,24 @@ public abstract class Operacao {
     }
 
     public Long getVinculoTransferencia() {
-        return isCreditoTransferencia() ? getTransferenciaOrigem().getId() : (isTransferencia() ? id : null);
+        return isCreditoTransferencia() ? getTransferenciaOrigem().getId() : (isTransferencia() ? getId() : null);
     }
 
     public String getParcelaDescricao() {
         return getParcelaTransferencia() == null ? "" : getParcelaTransferencia().getDescricao();
     }
 
-    public BigDecimal getDesembolsoEfetivo() {
-        return isConfirmada() ? desembolso : BigDecimal.ZERO;
+    public Dinheiro getDesembolsoEfetivo() {
+        return Dinheiro.de(BigDecimal.ZERO);
     }
 
-    public BigDecimal getReceitaEfetiva() {
-        return isConfirmada() && tipo == TipoOperacao.VENDA ? valor : BigDecimal.ZERO;
+    public Dinheiro getReceitaEfetiva() {
+        return Dinheiro.de(isConfirmada() && getTipo() == TipoOperacao.VENDA ? valor : BigDecimal.ZERO);
     }
 
-    public BigDecimal getMilheiro() {
-        return quantidade.signum() == 0
+    public Dinheiro getMilheiro() {
+        return Dinheiro.de(quantidade.signum() == 0
             ? BigDecimal.ZERO
-            : valor.multiply(new BigDecimal("1000")).divide(quantidade, 4, java.math.RoundingMode.HALF_UP);
+            : valor.multiply(new BigDecimal("1000")).divide(quantidade, 4, java.math.RoundingMode.HALF_UP));
     }
 }

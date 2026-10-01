@@ -18,6 +18,10 @@ public class MigracaoOperacoes {
     @Transactional
     public void normalizar() {
         jdbc.update("update programa set categoria=upper(categoria) where lower(categoria) in ('pontos','milhas')");
+        if (!coluna("DESEMBOLSO")) return;
+        jdbc.execute("create table if not exists migracao_modelo (nome varchar(80) primary key)");
+        if (jdbc.queryForObject("select count(*) from migracao_modelo where nome='valor_adicional'", Long.class) > 0)
+            return;
         List<Map<String, Object>> linhas = jdbc.queryForList("select * from operacao order by data, id");
         Map<Long, BigDecimal[]> posicoes = new HashMap<>();
         linhas.sort(Comparator.comparing((Map<String, Object> l) -> l.get("DATA").toString())
@@ -91,6 +95,18 @@ public class MigracaoOperacoes {
                     + "and not exists (select 1 from " + tipo + " t where t.id=o.id)", tipo);
             }
         }
+        migrarValoresFinanceiros();
+    }
+
+    private void migrarValoresFinanceiros() {
+        if (jdbc.queryForObject("select count(*) from operacao where desembolso is null", Long.class) != 0)
+            throw new IllegalStateException(Textos.get("operacao.migracao.incompleta"));
+        jdbc.update("update transferencia t set valor_adicional=(select o.desembolso from operacao o where o.id=t.id)");
+        jdbc.update("update operacao set valor=valor-desembolso where tipo='VENDA'");
+        jdbc.update("update operacao set valor=desembolso where tipo='RESGATE'");
+        jdbc.update("update operacao o set valor=(select original.valor from estorno e "
+            + "join operacao original on original.id=e.operacao_original_id where e.id=o.id) where o.tipo='ESTORNO'");
+        jdbc.update("insert into migracao_modelo(nome) values ('valor_adicional')");
     }
 
     private void inserirCredito(Map<String, Object> origem, String status, String parcela,
@@ -116,7 +132,8 @@ public class MigracaoOperacoes {
 
     /** Só remove a estrutura antiga depois da conversão transacional e reconstrução do consolidado. */
     public void concluir() {
-        if (jdbc.queryForObject("select count(*) from operacao where desembolso is null", Long.class) != 0)
+        if (coluna("DESEMBOLSO") && jdbc.queryForObject(
+            "select count(*) from migracao_modelo where nome='valor_adicional'", Long.class) == 0)
             throw new IllegalStateException(Textos.get("operacao.migracao.incompleta"));
         var restricoes = jdbc.queryForList("select distinct tc.constraint_name, cc.check_clause "
             + "from information_schema.table_constraints tc join information_schema.check_constraints cc "
@@ -138,7 +155,7 @@ public class MigracaoOperacoes {
                 + "check (tipo in ('ACUMULO','TRANSFERENCIA','VENDA','RESGATE','ESTORNO'))");
         for (String coluna : List.of("COM_CARRINHO", "PONTOS_DEBITAR_SALDO", "VALOR_CARRINHO", "CREDITOS_GERADOS",
             "BONUS", "CANCELADA", "PONTOS_ORIGEM", "PONTOS_DESTINO", "TAXAS", "DESTINO_ID",
-            "TRANSFERENCIA_ORIGEM_ID", "PARCELA_TRANSFERENCIA")) {
+            "TRANSFERENCIA_ORIGEM_ID", "PARCELA_TRANSFERENCIA", "CHAVE_IMPORTACAO", "DESEMBOLSO")) {
             if (coluna(coluna)) {
                 var vinculos = jdbc.queryForList("select tc.constraint_name "
                     + "from information_schema.table_constraints tc join information_schema.key_column_usage ku "

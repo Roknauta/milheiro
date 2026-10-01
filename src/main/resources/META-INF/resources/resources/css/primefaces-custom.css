@@ -205,3 +205,87 @@ body.milheiro-app .ui-chkbox .ui-chkbox-box.ui-state-active {
 body.milheiro-app .ui-chkbox .ui-chkbox-box.ui-state-focus {
     box-shadow: 0 0 0 2px #a8cfb9;
 }
+
+body.milheiro-app .toggle-field-grid .ui-outputlabel {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+}
+
+body.milheiro-app .ui-toggleswitch {
+    flex-shrink: 0;
+}
+
+body.milheiro-app .ui-toggleswitch .ui-toggleswitch-slider {
+    background: #c7d5cd;
+    transition: none;
+}
+
+body.milheiro-app .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
+    background: var(--green);
+}
+
+body.milheiro-app .ui-toggleswitch.ui-toggleswitch-focus .ui-toggleswitch-slider {
+    box-shadow: 0 0 0 2px #a8cfb9;
+}
+
+body.milheiro-app .ui-toggleswitch .ui-toggleswitch-slider::before {
+    background: #fff;
+    transition: none;
+}
+
+body.milheiro-app .ui-panelgrid.toggle-field-grid {
+    border: 0;
+    border-collapse: collapse;
+    table-layout: auto;
+    display: inline-table;
+    width: auto !important;
+}
+
+body.milheiro-app .ui-panelgrid.toggle-field-grid > tbody > tr,
+body.milheiro-app .ui-panelgrid.toggle-field-grid > tbody > tr > td {
+    border: 0;
+    background: transparent;
+}
+
+body.milheiro-app .ui-panelgrid.toggle-field-grid > tbody > tr > td {
+    vertical-align: middle;
+    width: auto;
+    padding: .25rem 0;
+}
+
+body.milheiro-app .ui-panelgrid.toggle-field-grid > tbody > tr > .toggle-label-column {
+    padding-right: .35rem;
+}
+
+body.milheiro-app .toggle-field-grid .ui-toggleswitch {
+    display: block;
+    margin: 0;
+}
+
+/* Prevalece sobre as cores do tema nos estados ligado e em foco. */
+body.milheiro-app .toggle-field-grid .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
+    background: var(--green) !important;
+}
+
+body.milheiro-app .toggle-field-grid .ui-toggleswitch.ui-toggleswitch-focus .ui-toggleswitch-slider {
+    box-shadow: 0 0 0 2px #a8cfb9 !important;
+}
+
+body.milheiro-app .ui-panel.dashboard-chart-panel {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--green);
+    border-radius: 10px;
+    background: #fff;
+}
+
+body.milheiro-app .dashboard-chart-panel > .ui-panel-titlebar {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    border: 0;
+    padding: 16px;
+}
+
+body.milheiro-app .dashboard-chart-panel > .ui-panel-content { padding: 20px; }
+body.milheiro-app .ui-chart.dashboard-pie { position: relative; height: 340px; width: 100%; }

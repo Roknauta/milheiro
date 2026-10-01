@@ -68,7 +68,6 @@
                 <t:column headerText="#{msg['interface.operacao']}" value="#{item.operacaoOriginal.tipo.descricao}"/>
                 <t:column headerText="#{msg['interface.quantidade.2']}" value="#{item.quantidade}" converter="quantidadeConverter"/>
                 <t:column headerText="#{msg['interface.valor.custo.proporcional.r']}" value="#{item.valor}" converter="monetarioConverter"/>
-                <t:column headerText="#{msg['operacao.desembolso']}" value="#{item.desembolso}" converter="monetarioConverter"/>
                 <t:column headerText="#{msg['interface.observacoes']}" value="#{item.observacoes}"/>
             </p:dataTable>
         </p:panel>

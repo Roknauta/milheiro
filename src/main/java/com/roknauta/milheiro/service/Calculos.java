@@ -1,6 +1,7 @@
 package com.roknauta.milheiro.service;
 
 import java.math.BigDecimal;
+import com.roknauta.milheiro.domain.Dinheiro;
 import java.math.RoundingMode;
 
 public final class Calculos {
@@ -8,8 +9,8 @@ public final class Calculos {
     public static final BigDecimal MIL = new BigDecimal("1000");
 
     /** Equivalência proporcional: 2.000 pontos ALL correspondem a 40 euros. */
-    public static BigDecimal eurosAll(BigDecimal pontos) {
-        return pontos.multiply(new BigDecimal("40")).divide(new BigDecimal("2000"));
+    public static Dinheiro eurosAll(BigDecimal pontos) {
+        return Dinheiro.de(pontos.multiply(new BigDecimal("40")).divide(new BigDecimal("2000")));
     }
 
     private Calculos() {

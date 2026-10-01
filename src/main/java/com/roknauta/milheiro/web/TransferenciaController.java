@@ -21,12 +21,10 @@ public class TransferenciaController extends OperacaoController<Transferencia> {
     private List<FatorConversao> fatores = List.of();
     private ResultadoTransferencia resultadoTransferencia;
 
-    public TransferenciaController(CarteiraService service) {
+    public TransferenciaController(OperacaoService service) {
         super(service, TipoOperacao.TRANSFERENCIA, Transferencia.class);
     }
 
-    @Override
-    protected Long destinoParaSalvar() { return destinoOperacao; }
 
     @Override
     protected void limparEspecificos() {
@@ -41,12 +39,13 @@ public class TransferenciaController extends OperacaoController<Transferencia> {
         return super.corresponde(item) || contem(item.getDestino().getNome());
     }
 
-    private BigDecimal resumoPontos, resumoCusto, resumoTotal, resumoEuros, resumoPontosCarrinho,
-        resumoMilheiroCarrinho;
+    private BigDecimal resumoPontos, resumoPontosCarrinho;
+    private Dinheiro resumoCusto, resumoTotal, resumoEuros, resumoMilheiroCarrinho;
     private String resumoAviso;
 
     public void atualizarResumoTransferencia() {
-        resumoPontos = resumoCusto = resumoTotal = resumoEuros = resumoPontosCarrinho = resumoMilheiroCarrinho = null;
+        resumoPontos = resumoPontosCarrinho = null;
+        resumoCusto = resumoTotal = resumoEuros = resumoMilheiroCarrinho = null;
         resumoAviso = null;
         resultadoTransferencia = null;
         if (!operacao.isTransferencia() || operacao.getData() == null || programaOperacao == null || destinoOperacao == null)
@@ -110,7 +109,7 @@ public class TransferenciaController extends OperacaoController<Transferencia> {
                 destinoOperacao)).findFirst().orElse(null);
     }
 
-    public BigDecimal getCustoPorEuro() {
+    public Dinheiro getCustoPorEuro() {
         BigDecimal euros = resumoEuros;
         return TransferenciaHelper.custoPorEuro(resumoTotal, euros);
     }
@@ -121,8 +120,17 @@ public class TransferenciaController extends OperacaoController<Transferencia> {
     public BigDecimal getPontosComprados() {
         return resultadoTransferencia == null ? null : resultadoTransferencia.comprados();
     }
-    public BigDecimal getCustoCarrinho() {
-        return operacao.isComCarrinho() ? operacao.getValorCarrinho() : BigDecimal.ZERO;
+    public Dinheiro getCustoCarrinho() {
+        return operacao.isComCarrinho() ? operacao.getValorCarrinho() : Dinheiro.ZERO;
     }
 
+    @Override
+    protected Transferencia salvarOperacao() {
+        return service.salvarTransferencia(operacao, programaOperacao, destinoOperacao);
+    }
+    @Override
+    protected void prepararEdicao(Transferencia item) {
+        destinoOperacao = item.getDestino().getId();
+        operacao.setValorAdicional(item.getValorAdicional());
+    }
 }

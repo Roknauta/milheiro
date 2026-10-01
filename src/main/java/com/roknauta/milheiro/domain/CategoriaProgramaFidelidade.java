@@ -1,6 +1,6 @@
 package com.roknauta.milheiro.domain;
 
-public enum CategoriaPrograma {
+public enum CategoriaProgramaFidelidade {
 
     MILHAS,PONTOS
 }

@@ -40,9 +40,9 @@
                     </h:panelGroup>
                 </h:panelGroup>
                 <h:panelGroup style="margin-top: 1rem;" layout="block">
-                    <m:selectBooleanCheckbox id="comCarrinho" value="#{calculadora.comCarrinho}" itemLabel="#{msg['interface.transferencia.com.carrinho']}">
+                    <m:toggleSwitch id="comCarrinho" value="#{calculadora.comCarrinho}" label="#{msg['interface.transferencia.com.carrinho']}">
                         <p:ajax listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:areaCarrinho :simulacao:resumo"/>
-                    </m:selectBooleanCheckbox>
+                    </m:toggleSwitch>
                 </h:panelGroup>
                 <h:panelGroup id="areaCarrinho" layout="block">
                     <ui:fragment rendered="#{calculadora.comCarrinho}">
