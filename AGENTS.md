@@ -17,8 +17,8 @@ Esta orientação permanece válida até que o usuário solicite sua alteração
 - Abrir somente a pesquisa por padrão; mostrar resultados depois de Pesquisar e formulário somente após Novo ou Editar.
 - Todas as mensagens e textos apresentados devem estar em arquivo properties, com chaves em português.
 - Campos de formulário que combinam dois ou mais componentes (por exemplo label, input e message) devem usar composite. Não criar composites para componentes isolados.
-- Em dataTable, usar a tag Facelets `t:column` para uma única exibição, com header centralizado e ordenação/filtro desativados por padrão. Manter `p:column` para conteúdo combinado ou ações. Permitir converter e footer na tag.
-- Respeitar a paleta verde em todos os componentes novos; estilos gerais em custom.css e ajustes PrimeFaces em primefaces-custom.css.
+- Em dataTable, usar a tag Facelets `t:column` para uma única exibição, com cabeçalho no estilo padrão do PrimeFaces e ordenação/filtro desativados por padrão. Manter `p:column` para conteúdo combinado ou ações. Permitir converter e footer na tag.
+- Usar a aparência padrão do tema PrimeFaces configurado. Não adicionar CSS próprio nem estilos inline sem pedido explícito; ajustes visuais serão feitos sob demanda.
 - Calendários devem permitir navegação por mês e ano e entrada manual por padrão; restringir apenas quando necessário ao campo.
 - Priorizar componentes JSF/PrimeFaces e formulários em duas colunas.
 
@@ -100,4 +100,21 @@ Esta orientação permanece válida até que o usuário solicite sua alteração
 - Usar ProgramaFidelidade, CategoriaProgramaFidelidade e ProgramaFidelidadeRepository. O cadastro usa ProgramaFidelidadeController e programa-fidelidade.xhtml.
 - Manter o mapeamento de ProgramaFidelidade para a tabela programa, preservando os dados e as chaves estrangeiras existentes.
 
-- Dashboard usa dashboard.xhtml e DashboardController; gráficos podem usar cores variadas para distinguir programas. Manter os dois gráficos lado a lado em telas de computador.
+- Dashboard usa dashboard.xhtml e DashboardController. Manter os gráficos lado a lado usando o layout nativo do PrimeFaces e as cores padrão dos gráficos.
+
+## Aparência padrão — orientação atual
+
+- Removida a personalização verde, os arquivos custom.css e primefaces-custom.css e os estilos inline dos XHTML.
+- Manter a estrutura com componentes JSF/PrimeFaces e seus layouts nativos, sem recriar a identidade visual anterior.
+- Classes funcionais nativas, como ui-confirmdialog-yes/no, devem ser preservadas.
+
+- Seleções de ProgramaFidelidade usam o composite programaFidelidadeAutoComplete (label, autoComplete e message), com busca por nome e seleção por id Long; preservar eventos de seleção e limpeza.
+
+## Ajuste visual autorizado
+
+- Permitir CSS de estrutura, espaçamento, alinhamento, tipografia e responsividade em custom.css e primefaces-custom.css. Preservar todas as cores, fundos, bordas coloridas e estados nativos do tema PrimeFaces; não reintroduzir a paleta verde personalizada.
+
+## Nomes das telas e títulos de formulário
+
+- Menus e arquivos das operações no singular: Acúmulo (acumulo.xhtml), Transferência (transferencia.xhtml), Venda (venda.xhtml), Resgate (resgate.xhtml) e Estorno (estorno.xhtml).
+- O template CRUD mostra Cadastrando <menu> para registros novos e Editando <menu> para registros existentes, distinguindo pelo id do registro.

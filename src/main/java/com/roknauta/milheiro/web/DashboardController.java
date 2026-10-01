@@ -26,6 +26,12 @@ public class DashboardController implements Serializable {
         consolidados = service.consolidados();
     }
 
+    public List<Consolidado> getConsolidados() {
+        return consolidados.stream()
+            .sorted(Comparator.comparing(c -> c.getPrograma().getNome(), String.CASE_INSENSITIVE_ORDER))
+            .toList();
+    }
+
     public BigDecimal getSaldoTotal() {
         return consolidados.stream().map(Consolidado::getSaldo).reduce(BigDecimal.ZERO, BigDecimal::add);
     }

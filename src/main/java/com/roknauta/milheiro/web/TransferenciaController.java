@@ -29,7 +29,7 @@ public class TransferenciaController extends OperacaoController<Transferencia> {
     @Override
     protected void limparEspecificos() {
         destinoOperacao = null;
-        conversaoExcepcional = true;
+        conversaoExcepcional = false;
         fatores = service.fatores();
         atualizarResumoTransferencia();
     }

@@ -1,0 +1,28 @@
+<ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite"
+    xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html">
+    <cc:interface componentType="programaFidelidadeAutoComplete">
+        <cc:attribute name="value" required="true"/>
+        <cc:attribute name="programas" required="true"/>
+        <cc:attribute name="label" default=""/>
+        <cc:attribute name="required" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="disabled" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="requiredMessage" default="#{msg['componente.obrigatorio']}"/>
+        <cc:editableValueHolder name="input" targets="input"/>
+        <cc:clientBehavior name="itemSelect" event="itemSelect" targets="input" default="true"/>
+        <cc:clientBehavior name="clear" event="clear" targets="input"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:panelGrid columns="1" styleClass="form-field">
+            <p:outputLabel for="input" value="#{cc.attrs.label}" rendered="#{not empty cc.attrs.label}"/>
+            <p:autoComplete id="input" value="#{cc.attrs.value}" completeMethod="#{cc.completar}"
+                var="programaId" itemValue="#{programaId}" itemLabel="#{cc.nome(programaId)}"
+                converter="jakarta.faces.Long" forceSelection="true" dropdown="true" minQueryLength="0"
+                queryDelay="250" scrollHeight="250" label="#{cc.attrs.label}"
+                placeholder="#{msg['interface.selecione.o.programa']}"
+                emptyMessage="#{msg['programa.fidelidade.busca.vazia']}"
+                required="#{cc.attrs.required}" requiredMessage="#{cc.attrs.requiredMessage}"
+                disabled="#{cc.attrs.disabled}"/>
+            <p:message for="input"/>
+        </h:panelGrid>
+    </cc:implementation>
+</ui:component>

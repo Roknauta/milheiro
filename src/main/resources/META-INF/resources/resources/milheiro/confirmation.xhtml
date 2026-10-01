@@ -4,7 +4,7 @@
 
     </cc:interface>
     <cc:implementation>
-        <p:confirmDialog global="true" responsive="true" showEffect="none" hideEffect="none">
+        <p:confirmDialog global="true" responsive="true" appendTo="@(body)" styleClass="confirmacao-centralizada">
             <p:commandButton value="#{msg['interface.voltar']}" type="button" styleClass="ui-confirmdialog-no"/>
             <p:commandButton value="#{msg['interface.confirmar']}" type="button" styleClass="ui-confirmdialog-yes"/>
         </p:confirmDialog>

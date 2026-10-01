@@ -1,19 +1,18 @@
 <ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:p="http://primefaces.org/ui"
     xmlns:m="jakarta.faces.composite/resources/milheiro">
     <ui:fragment rendered="#{transferenciaController.operacao.id != null}">
-        <h:outputText value="#{msg['transferencia.edicao.orientacao']}" styleClass="summary-note"/>
-        <h:panelGroup layout="block" styleClass="crud-fields">
+        <h:outputText value="#{msg['transferencia.edicao.orientacao']}"/>
+        <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
             <m:datePicker id="editarData" value="#{transferenciaController.operacao.data}" label="#{msg['interface.data.2']}" required="true" pattern="dd/MM/yyyy"/>
-            <m:selectOneMenu id="editarOrigem" value="#{transferenciaController.programaOperacao}" label="#{msg['interface.programa']}" required="true">
-                <f:selectItems value="#{transferenciaController.programasAtivos}" var="programa" itemValue="#{programa.id}" itemLabel="#{programa.nome}"/>
-            </m:selectOneMenu>
-            <m:selectOneMenu id="editarDestino" value="#{transferenciaController.destinoOperacao}" label="#{msg['interface.programa.de.destino']}" required="true">
-                <f:selectItems value="#{transferenciaController.programasAtivos}" var="programa" itemValue="#{programa.id}" itemLabel="#{programa.nome}"/>
-            </m:selectOneMenu>
+            <m:programaFidelidadeAutoComplete id="editarOrigem" value="#{transferenciaController.programaOperacao}" label="#{msg['interface.programa']}" required="true" programas="#{transferenciaController.programasAtivos}">
+            </m:programaFidelidadeAutoComplete>
+            <m:programaFidelidadeAutoComplete id="editarDestino" value="#{transferenciaController.destinoOperacao}" label="#{msg['interface.programa.de.destino']}" required="true" programas="#{transferenciaController.programasAtivos}">
+            </m:programaFidelidadeAutoComplete>
             <m:inputNumber id="editarQuantidade" value="#{transferenciaController.operacao.quantidade}" label="#{msg['interface.pontos.debitados.do.saldo.da.origem']}" required="true" decimalPlaces="0" minValue="0" maxValue="999999999999" decimalSeparator="," thousandSeparator="."/>
             <m:inputNumber id="editarValor" value="#{transferenciaController.operacao.valor}" label="#{msg['interface.valor.custo.proporcional.r']}" required="true" decimalPlaces="2" minValue="0" maxValue="999999999999" decimalSeparator="," thousandSeparator="."/>
             <m:inputNumber id="editarAdicional" value="#{transferenciaController.operacao.valorAdicional}" label="#{msg['transferencia.valor.adicional']}" required="true" decimalPlaces="2" minValue="0" maxValue="999999999999" decimalSeparator="," thousandSeparator="."/>
-        </h:panelGroup>
+        </p:panelGrid>
         <m:inputTextarea id="editarObservacoes" value="#{transferenciaController.operacao.observacoes}" label="#{msg['interface.observacoes']}" maxlength="500" rows="2"/>
     </ui:fragment>
 </ui:composition>

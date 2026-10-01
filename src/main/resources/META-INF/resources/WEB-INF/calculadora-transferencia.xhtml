@@ -1,188 +1,123 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough">
     <h:form id="simulacao">
-        <h:panelGroup style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start;" layout="block">
-            <p:panel style="margin-bottom: 1rem; min-width: 0; flex: 1 1 540px; min-width: 0;">
-                <h:outputText style="display: block; font-size: 1.1rem; font-weight: 600; margin: 1rem 0;" value="#{msg['interface.dados.da.transferencia']}"/>
-                <h:panelGroup styleClass="crud-fields" layout="block">
-                    <h:panelGroup style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;" layout="block">
-                        <m:selectOneMenu id="origem" value="#{calculadora.origemId}" label="#{msg['interface.origem']}">
-                            <f:selectItem itemLabel="#{msg['interface.selecione.o.programa']}" itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItems value="#{calculadora.programas}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}"/>
-                            <p:ajax listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
-                        </m:selectOneMenu>
+        <h:panelGroup layout="block">
+            <p:panel>
+                <h:outputText value="#{msg['interface.dados.da.transferencia']}"/>
+                <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
+                    <h:panelGroup layout="block">
+                        <m:programaFidelidadeAutoComplete id="origem" value="#{calculadora.origemId}" label="#{msg['interface.origem']}" programas="#{calculadora.programas}">
+                            <p:ajax event="itemSelect" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
+                <p:ajax event="clear" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
+                        </m:programaFidelidadeAutoComplete>
                     </h:panelGroup>
-                    <h:panelGroup style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;" layout="block">
-                        <m:selectOneMenu id="destino" value="#{calculadora.destinoId}" label="#{msg['interface.destino.2']}">
-                            <f:selectItem itemLabel="#{msg['interface.selecione.o.programa']}" itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItems value="#{calculadora.programas}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}"/>
-                            <p:ajax listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
-                        </m:selectOneMenu>
+                    <h:panelGroup layout="block">
+                        <m:programaFidelidadeAutoComplete id="destino" value="#{calculadora.destinoId}" label="#{msg['interface.destino.2']}" programas="#{calculadora.programas}">
+                            <p:ajax event="itemSelect" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
+                <p:ajax event="clear" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
+                        </m:programaFidelidadeAutoComplete>
                     </h:panelGroup>
-                    <h:panelGroup id="fatorArea" layout="block" style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;">
+                    <h:panelGroup id="fatorArea" layout="block">
                         <m:inputText id="fator" value="#{calculadora.fator}" maxlength="40" placeholder="#{msg['interface.ex.3.500.1.000']}" label="#{msg['interface.fator']}">
                             <p:ajax event="keyup" delay="350" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                             <p:ajax event="change" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                         </m:inputText>
-                        <h:panelGroup layout="inline" style=" font-size: .85rem;"> #{msg['interface.origem.destino.ex.3.500.1.000.significa.3.5.pontos.na.origem.para.1.no.destino']} </h:panelGroup>
-                        <h:panelGroup layout="inline" style=" font-size: .85rem;">#{calculadora.fatorDoCadastro ? msg['interface.preenchido.a.partir.do.cadastro.voce.pode.editar.apenas.para.esta.simulacao'] : msg['interface.informe.a.proporcao.desejada.para.1.1.digite.1.000.1.000']}</h:panelGroup>
+                        <h:panelGroup layout="inline"> #{msg['interface.origem.destino.ex.3.500.1.000.significa.3.5.pontos.na.origem.para.1.no.destino']} </h:panelGroup>
+                        <h:panelGroup layout="inline">#{calculadora.fatorDoCadastro ? msg['interface.preenchido.a.partir.do.cadastro.voce.pode.editar.apenas.para.esta.simulacao'] : msg['interface.informe.a.proporcao.desejada.para.1.1.digite.1.000.1.000']}</h:panelGroup>
                     </h:panelGroup>
-                    <h:panelGroup style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;" layout="block">
+                    <h:panelGroup layout="block">
                         <m:inputNumber id="pontos" value="#{calculadora.pontos}" label="#{receber ? msg['interface.pontos.a.receber'] : msg['interface.total.de.pontos.a.transferir']}" decimalPlaces="0" decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999" emptyValue="empty">
                             <p:ajax event="keyup" delay="350" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                             <p:ajax event="change" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                         </m:inputNumber>
                     </h:panelGroup>
-                    <h:panelGroup style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;" layout="block">
+                    <h:panelGroup layout="block">
                         <m:inputNumber id="bonus" value="#{calculadora.bonus}" label="#{msg['interface.bonus']}" decimalPlaces="0" decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999" emptyValue="empty">
                             <p:ajax event="keyup" delay="350" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                             <p:ajax event="change" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                         </m:inputNumber>
                     </h:panelGroup>
-                </h:panelGroup>
-                <h:panelGroup style="margin-top: 1rem;" layout="block">
+                </p:panelGrid>
+                <h:panelGroup layout="block">
                     <m:toggleSwitch id="comCarrinho" value="#{calculadora.comCarrinho}" label="#{msg['interface.transferencia.com.carrinho']}">
                         <p:ajax listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:areaCarrinho :simulacao:resumo"/>
                     </m:toggleSwitch>
                 </h:panelGroup>
                 <h:panelGroup id="areaCarrinho" layout="block">
                     <ui:fragment rendered="#{calculadora.comCarrinho}">
-                        <h:panelGroup styleClass="crud-fields" layout="block">
-                            <h:panelGroup style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;" layout="block">
+                        <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
+                            <h:panelGroup layout="block">
                                 <m:inputNumber id="pontosDebitarSaldo" value="#{calculadora.pontosDebitarSaldo}" label="#{msg['interface.pontos.a.debitar.do.saldo']}" decimalPlaces="0" decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999" emptyValue="empty">
                                     <p:ajax event="keyup" delay="350" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                                     <p:ajax event="change" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                                 </m:inputNumber>
                             </h:panelGroup>
-                            <h:panelGroup style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;" layout="block">
+                            <h:panelGroup layout="block">
                                 <m:inputNumber id="valorCarrinho" value="#{calculadora.valorCarrinho}" label="#{msg['interface.valor.carrinho.r']}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999" emptyValue="empty">
                                     <p:ajax event="keyup" delay="350" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                                     <p:ajax event="change" listener="#{calculadora.recalcular(receber)}" process="@form" update=":simulacao:resumo"/>
                                 </m:inputNumber>
                             </h:panelGroup>
-                        </h:panelGroup>
-                        <h:panelGroup style="display: block; margin: 1rem 0;" layout="block"> #{msg['interface.informe.quantos.pontos.serao.debitados.do.seu.saldo.a.diferenca.para.o.total.d']} </h:panelGroup>
+                        </p:panelGrid>
+                        <h:panelGroup layout="block"> #{msg['interface.informe.quantos.pontos.serao.debitados.do.seu.saldo.a.diferenca.para.o.total.d']} </h:panelGroup>
                     </ui:fragment>
                 </h:panelGroup>
-                <h:panelGroup style="display: block; margin: 1rem 0;" layout="block"> #{msg['interface.simulacao.atualizada.durante.o.preenchimento.nenhuma.operacao.sera.registrada']} </h:panelGroup>
+                <h:panelGroup layout="block"> #{msg['interface.simulacao.atualizada.durante.o.preenchimento.nenhuma.operacao.sera.registrada']} </h:panelGroup>
             </p:panel>
-            <h:panelGroup id="resumo" layout="block" pt:aria-live="polite" style="flex: 1 1 320px; min-width: 0;">
-                <p:panel style="margin-bottom: 1rem; min-width: 0;" styleClass="transfer-summary" header="#{msg['interface.resumo.da.transferencia']}">
+            <h:panelGroup id="resumo" layout="block" pt:aria-live="polite">
+                <p:panel header="#{msg['interface.resumo.da.transferencia']}" styleClass="resumo-transferencia">
                     <ui:fragment rendered="#{calculadora.origem != null}">
-                        <h:panelGroup layout="block" styleClass="summary-source">
-                            <h:panelGroup layout="inline" styleClass="summary-source-name">#{calculadora.origem.programa.nome}</h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-source-balance"> #{msg['interface.saldo.disponivel']} <h:outputText value="#{calculadora.origem.saldo}">
-                                    <f:converter converterId="quantidadeConverter"/>
-                                </h:outputText>
-                            </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <h:panelGroup layout="inline">#{calculadora.origem.programa.nome}</h:panelGroup>
+                            <m:labelValor label="#{msg['interface.saldo.disponivel']}" value="#{calculadora.origem.saldo}" converter="quantidadeConverter"/>
                         </h:panelGroup>
-                        <h:panelGroup layout="block" styleClass="summary-row">
-                            <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.gasto.total.acumulado.na.origem']} </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-value">
-                                <h:outputText value="#{calculadora.origem.gasto}">
-                                    <f:converter converterId="monetarioConverter"/>
-                                </h:outputText>
-                            </h:panelGroup>
-                        </h:panelGroup>
+                        <m:labelValor label="#{msg['interface.gasto.total.acumulado.na.origem']}"
+                              value="#{calculadora.origem.gasto}" converter="monetarioConverter"/>
                     </ui:fragment>
                     <ui:fragment rendered="#{not calculadora.calculado}">
                         <h:panelGroup layout="block">#{calculadora.orientacao == null ? msg['interface.selecione.origem.e.destino.para.comecar'] : calculadora.orientacao}</h:panelGroup>
                     </ui:fragment>
                     <ui:fragment rendered="#{calculadora.calculado}">
-                        <h:panelGroup layout="block" styleClass="summary-row">
-                            <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.total.da.transferencia.antes.do.fator.e.bonus']} </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-value">
-                                <h:outputText value="#{calculadora.totalTransferencia}">
-                                    <f:converter converterId="quantidadeConverter"/>
-                                </h:outputText>
-                            </h:panelGroup>
-                        </h:panelGroup>
-                        <h:panelGroup layout="block" styleClass="summary-row">
-                            <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.pontos.debitados.do.saldo.da.origem']} </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-value">
-                                <h:outputText value="#{calculadora.pontosTransferir}">
-                                    <f:converter converterId="quantidadeConverter"/>
-                                </h:outputText>
-                            </h:panelGroup>
-                        </h:panelGroup>
-                        <h:panelGroup layout="block" styleClass="summary-row">
-                            <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.gasto.percentual.da.transferencia']} </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-value">
-                                <h:outputText value="#{calculadora.gastoPercentual}">
-                                    <f:converter converterId="monetarioConverter"/>
-                                </h:outputText>
-                            </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-note">
-                                <h:outputText value="#{calculadora.percentual}">
+                        <m:labelValor label="#{msg['interface.total.da.transferencia.antes.do.fator.e.bonus']}"
+                              value="#{calculadora.totalTransferencia}" converter="quantidadeConverter"/>
+                        <m:labelValor label="#{msg['interface.pontos.debitados.do.saldo.da.origem']}"
+                              value="#{calculadora.pontosTransferir}" converter="quantidadeConverter"/>
+                        <m:labelValor label="#{msg['interface.gasto.percentual.da.transferencia']}"
+                              value="#{calculadora.gastoPercentual}" converter="monetarioConverter"/>
+                        <h:panelGroup layout="block" styleClass="resumo-nota"><h:outputText value="#{calculadora.percentual}">
                                     <f:converter converterId="decimalConverter"/>
-                                </h:outputText> #{msg['interface.do.acumulado.historico.da.origem']} </h:panelGroup>
-                        </h:panelGroup>
+                                </h:outputText> #{msg['interface.do.acumulado.historico.da.origem']}</h:panelGroup>
                         <ui:fragment rendered="#{calculadora.comCarrinho}">
-                            <h:panelGroup layout="block" styleClass="summary-row">
-                                <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.pontos.comprados.no.carrinho']} </h:panelGroup>
-                                <h:panelGroup layout="inline" styleClass="summary-value">
-                                    <h:outputText value="#{calculadora.pontosCarrinho}">
-                                        <f:converter converterId="quantidadeConverter"/>
-                                    </h:outputText>
-                                </h:panelGroup>
-                            </h:panelGroup>
-                            <h:panelGroup layout="block" styleClass="summary-row">
-                                <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.pontos.do.carrinho.no.destino.com.bonus']} </h:panelGroup>
-                                <h:panelGroup layout="inline" styleClass="summary-value">
-                                    <h:outputText value="#{calculadora.pontosCarrinhoCreditar}">
-                                        <f:converter converterId="quantidadeConverter"/>
-                                    </h:outputText>
-                                </h:panelGroup>
-                            </h:panelGroup>
+                            <m:labelValor label="#{msg['interface.pontos.comprados.no.carrinho']}"
+                              value="#{calculadora.pontosCarrinho}" converter="quantidadeConverter"/>
+                            <m:labelValor label="#{msg['interface.pontos.do.carrinho.no.destino.com.bonus']}"
+                              value="#{calculadora.pontosCarrinhoCreditar}" converter="quantidadeConverter"/>
                             <ui:fragment rendered="#{calculadora.milheiroCarrinho != null}">
-                                <h:panelGroup layout="block" styleClass="summary-row">
-                                    <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.milheiro.do.carrinho.com.bonus']} </h:panelGroup>
-                                    <h:panelGroup layout="inline" styleClass="summary-value">
-                                        <h:outputText value="#{calculadora.milheiroCarrinho}">
-                                            <f:converter converterId="monetarioConverter"/>
-                                        </h:outputText>
-                                    </h:panelGroup>
-                                </h:panelGroup>
-                                <h:panelGroup layout="block" styleClass="summary-note"> #{msg['interface.valor.do.carrinho.pontos.comprados.creditados.no.destino.com.bonus.1.000.nao.i']} </h:panelGroup>
+                                <m:labelValor label="#{msg['interface.milheiro.do.carrinho.com.bonus']}"
+                              value="#{calculadora.milheiroCarrinho}" converter="monetarioConverter"/>
+                                <h:panelGroup layout="block"> #{msg['interface.valor.do.carrinho.pontos.comprados.creditados.no.destino.com.bonus.1.000.nao.i']} </h:panelGroup>
                             </ui:fragment>
-                            <h:panelGroup layout="block" styleClass="summary-row">
-                                <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.valor.do.carrinho']} </h:panelGroup>
-                                <h:panelGroup layout="inline" styleClass="summary-value">
-                                    <h:outputText value="#{calculadora.valorCarrinho}">
-                                        <f:converter converterId="monetarioConverter"/>
-                                    </h:outputText>
-                                </h:panelGroup>
-                            </h:panelGroup>
+                            <m:labelValor label="#{msg['interface.valor.do.carrinho']}"
+                              value="#{calculadora.valorCarrinho}" converter="monetarioConverter"/>
                         </ui:fragment>
-                        <h:panelGroup layout="block" styleClass="summary-row summary-total">
-                            <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.total.a.creditar.no.destino']} </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-value">
-                                <h:outputText value="#{calculadora.pontosCreditar}">
-                                    <f:converter converterId="quantidadeConverter"/>
-                                </h:outputText>
-                            </h:panelGroup>
-                        </h:panelGroup>
-                        <h:panelGroup layout="block" styleClass="summary-row summary-total">
-                            <h:panelGroup layout="inline" styleClass="summary-label"> #{msg['interface.valor.percentual.associado.ao.destino']} </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-value">
-                                <h:outputText value="#{calculadora.valorDestino}">
-                                    <f:converter converterId="monetarioConverter"/>
-                                </h:outputText>
-                            </h:panelGroup>
-                            <h:panelGroup layout="inline" styleClass="summary-note">#{calculadora.comCarrinho ? msg['interface.custo.proporcional.da.origem.valor.do.carrinho'] : msg['interface.custo.proporcional.dos.pontos.transferidos']}</h:panelGroup>
-                        </h:panelGroup>
+                        <m:labelValor label="#{msg['interface.total.a.creditar.no.destino']}"
+                              value="#{calculadora.pontosCreditar}" converter="quantidadeConverter"/>
+                        <m:labelValor label="#{msg['interface.valor.percentual.associado.ao.destino']}"
+                              value="#{calculadora.valorDestino}" converter="monetarioConverter"/>
+                        <h:panelGroup layout="block" styleClass="resumo-nota">#{calculadora.comCarrinho ? msg['interface.custo.proporcional.da.origem.valor.do.carrinho'] : msg['interface.custo.proporcional.dos.pontos.transferidos']}</h:panelGroup>
                         <ui:fragment rendered="#{calculadora.aviso != null}">
                             <h:panelGroup layout="block">#{calculadora.aviso}</h:panelGroup>
                         </ui:fragment>
-                        <h:panelGroup layout="block" styleClass="summary-note"> #{msg['interface.custo.proporcional.pontos.do.saldo.transferidos.gasto.historico.pontos.acumula']} #{receber ? msg['interface.a.necessidade.e.arredondada.para.cima.em.tres.casas.decimais'] : ''}</h:panelGroup>
-                        <h:panelGroup layout="block" styleClass="summary-euros" rendered="#{calculadora.eurosGerados != null}">
-                            <h:outputText value="#{msg['transferencia.euros']}"/>
-                            <h:outputText value="#{calculadora.eurosGerados}" converter="euroConverter" styleClass="summary-value"/>
-                            <h:panelGroup layout="block" styleClass="summary-row summary-rate" rendered="#{calculadora.custoPorEuro != null}">
-                                <h:outputText styleClass="summary-label" value="#{msg['transferencia.custo.euro']}"/>
-                                <h:outputText styleClass="summary-value" value="#{calculadora.custoPorEuro}" converter="monetarioConverter"/>
-                            </h:panelGroup>
-                            <h:outputText value="#{msg['transferencia.euros.regra']}" styleClass="summary-note"/>
-                            <h:outputText styleClass="summary-note" value="#{msg['transferencia.custo.euro.regra']}"/>
+                        <h:panelGroup layout="block"> #{msg['interface.custo.proporcional.pontos.do.saldo.transferidos.gasto.historico.pontos.acumula']} #{receber ? msg['interface.a.necessidade.e.arredondada.para.cima.em.tres.casas.decimais'] : ''}</h:panelGroup>
+                        <h:panelGroup layout="block" rendered="#{calculadora.eurosGerados != null}">
+                            <m:labelValor label="#{msg['transferencia.euros']}" value="#{calculadora.eurosGerados}" converter="euroConverter"/>
+                            <m:labelValor label="#{msg['transferencia.custo.euro']}"
+                              value="#{calculadora.custoPorEuro}" converter="monetarioConverter" rendered="#{calculadora.custoPorEuro != null}"/>
+                            <h:panelGroup layout="block" styleClass="resumo-nota">
+                        <h:outputText value="#{msg['transferencia.euros.regra']}"/>
+                    </h:panelGroup>
+                            <h:panelGroup layout="block" styleClass="resumo-nota">
+                        <h:outputText value="#{msg['transferencia.custo.euro.regra']}"/>
+                    </h:panelGroup>
                         </h:panelGroup>
                     </ui:fragment>
                 </p:panel>

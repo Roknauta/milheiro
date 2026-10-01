@@ -2,38 +2,31 @@
                 xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
                 template="/WEB-INF/crud.xhtml">
     <ui:param name="pagina" value="#{msg['interface.fatores']}"/>
-    <ui:param name="tituloFormulario" value="#{carteira.fator.id == null ? msg['interface.novo.fator'] : msg['interface.editar.fator']}"/>
+    <ui:param name="tituloFormulario" value="#{msg['interface.fatores.de.conversao']}"/>
+    <ui:param name="registroEmEdicao" value="#{carteira.fator.id != null}"/>
     <ui:define name="titulo"> #{msg['interface.fatores.de.conversao']} </ui:define>
-    <ui:define name="descricao"> #{msg['fator.descricao']} </ui:define>
     <ui:param name="formularioId" value="cadastro"/>
-    <ui:define name="novo">
-        <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus" action="#{carteira.novoFator}" process="@this" update=":conteudoCrud" resetValues="true"/>
-    </ui:define>
-    <ui:define name="formulario">
-        <h:panelGroup styleClass="crud-fields" layout="block">
-            <m:selectOneMenu id="origem" value="#{carteira.origemFator}" required="true" label="#{msg['interface.programa.de.origem']}">
-                <f:selectItem itemLabel="#{msg['interface.selecione']}" itemValue="#{null}" noSelectionOption="true"/>
-                <f:selectItems value="#{carteira.programasAtivos}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}"/>
-            </m:selectOneMenu>
-            <m:selectOneMenu id="destino" value="#{carteira.destinoFator}" required="true" label="#{msg['interface.programa.de.destino']}">
-                <f:selectItem itemLabel="#{msg['interface.selecione']}" itemValue="#{null}" noSelectionOption="true"/>
-                <f:selectItems value="#{carteira.programasAtivos}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}"/>
-            </m:selectOneMenu>
+    <ui:define name="editField">
+        <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
+            <m:programaFidelidadeAutoComplete id="origem" value="#{carteira.origemFator}" required="true" label="#{msg['interface.programa.de.origem']}" programas="#{carteira.programasAtivos}">
+            </m:programaFidelidadeAutoComplete>
+            <m:programaFidelidadeAutoComplete id="destino" value="#{carteira.destinoFator}" required="true" label="#{msg['interface.programa.de.destino']}" programas="#{carteira.programasAtivos}">
+            </m:programaFidelidadeAutoComplete>
             <m:inputNumber id="pontosOrigem" value="#{carteira.fator.pontosOrigem}" required="true" label="#{msg['interface.pontos.na.origem']}" decimalPlaces="3" decimalSeparator=","
                            thousandSeparator="." minValue="0.001" maxValue="999999999999"/>
             <m:inputNumber id="pontosDestino" value="#{carteira.fator.pontosDestino}" required="true" label="#{msg['interface.pontos.no.destino']}" decimalPlaces="3" decimalSeparator=","
                            thousandSeparator="." minValue="0.001" maxValue="999999999999"/>
-        </h:panelGroup>
-        <h:panelGroup style="display: block; margin: 1rem 0;"
+        </p:panelGrid>
+        <h:panelGroup
                       layout="block"> #{msg['interface.exemplo.3.5.pontos.na.origem.para.1.ponto.no.destino.equivale.ao.fator.1.3.5.o']}
         </h:panelGroup>
     </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{not carteira.editando and carteira.pesquisaRealizada}" style="margin-bottom: 1rem; min-width: 0;">
-            <h:outputText style="display: block; font-size: 1.1rem; font-weight: 600; margin: 1rem 0;" value="#{msg['interface.conversoes.cadastradas']}"/>
+        <p:panel rendered="#{not carteira.editando and carteira.pesquisaRealizada}" header="#{msg['crud.resultados']}">
+            <h:outputText value="#{msg['interface.conversoes.cadastradas']}"/>
             <p:dataTable id="registros" rendered="#{carteira.pesquisaRealizada}" showGridlines="true" value="#{carteira.fatoresEncontrados}"
                          emptyMessage="#{msg['interface.nenhum.fator.cadastrado']}" reflow="true" var="item" paginatorPosition="bottom">
-                <p:column headerText="#{msg['interface.opcoes']}" style="width: 5rem;">
+                <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
                     <m:rowActions id="acoes" edit="#{carteira.editarFator(item)}" remove="#{carteira.excluirFator(item)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
                                   confirmHeader="#{msg['interface.excluir.registro']}" confirmMessage="#{msg['interface.confirma.esta.acao']}"/>
                 </p:column>

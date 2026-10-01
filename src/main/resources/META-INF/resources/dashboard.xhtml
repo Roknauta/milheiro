@@ -1,59 +1,66 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough" template="/WEB-INF/template.xhtml">
     <ui:param name="pagina" value="#{msg['interface.dashboard']}"/>
     <ui:define name="titulo"> #{msg['interface.dashboard']} </ui:define>
-<!--    <ui:define name="descricao"> #{msg['interface.acompanhe.seus.saldos.e.o.custo.de.cada.milheiro']} </ui:define>-->
-    <ui:define name="conteudo">
-        <h:panelGroup styleClass="dashboard-metrics" layout="block">
-            <h:panelGroup styleClass="metric-card" layout="block">
-                <h:panelGroup layout="inline" styleClass="metric-label"> #{msg['interface.pontos.e.milhas.disponiveis']} </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-value" style="font-weight: 600;">
+<ui:define name="conteudo">
+        <p:panelGrid columns="4" layout="grid" styleClass="dashboard-metrics">
+            <p:panel styleClass="metric-card">
+                <h:panelGroup layout="block" styleClass="metric-label"> #{msg['interface.pontos.e.milhas.disponiveis']} </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="metric-value">
                     <h:outputText value="#{dashboardController.saldoTotal}">
                         <f:converter converterId="quantidadeConverter"/>
                     </h:outputText>
                 </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-note" style="font-size: .85rem;"> #{msg['interface.soma.dos.saldos.de.todos.os.programas']} </h:panelGroup>
-            </h:panelGroup>
-            <h:panelGroup styleClass="metric-card" layout="block">
-                <h:panelGroup layout="inline" styleClass="metric-label"> #{msg['interface.desembolso.total']} </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-value" style="font-weight: 600;">
+                <h:panelGroup layout="block" styleClass="metric-note"> #{msg['interface.soma.dos.saldos.de.todos.os.programas']} </h:panelGroup>
+            </p:panel>
+            <p:panel styleClass="metric-card">
+                <h:panelGroup layout="block" styleClass="metric-label"> #{msg['interface.desembolso.total']} </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="metric-value">
                     <h:outputText value="#{dashboardController.desembolso}">
                         <f:converter converterId="monetarioConverter"/>
                     </h:outputText>
                 </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-note" style="font-size: .85rem;"> #{msg['interface.compras.e.taxas.sem.duplicar.transferencias']} </h:panelGroup>
-            </h:panelGroup>
-            <h:panelGroup styleClass="metric-card" layout="block">
-                <h:panelGroup layout="inline" styleClass="metric-label"> #{msg['interface.receita.de.vendas']} </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-value" style="font-weight: 600;">
+                <h:panelGroup layout="block" styleClass="metric-note"> #{msg['interface.compras.e.taxas.sem.duplicar.transferencias']} </h:panelGroup>
+            </p:panel>
+            <p:panel styleClass="metric-card">
+                <h:panelGroup layout="block" styleClass="metric-label"> #{msg['interface.receita.de.vendas']} </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="metric-value">
                     <h:outputText value="#{dashboardController.receita}">
                         <f:converter converterId="monetarioConverter"/>
                     </h:outputText>
                 </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-note" style="font-size: .85rem;"> #{msg['interface.valores.recebidos.nas.vendas']} </h:panelGroup>
-            </h:panelGroup>
-            <h:panelGroup styleClass="metric-card" layout="block">
-                <h:panelGroup layout="inline" styleClass="metric-label"> #{msg['interface.resultado.de.caixa']} </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-value" style="font-weight: 600;">
+                <h:panelGroup layout="block" styleClass="metric-note"> #{msg['interface.valores.recebidos.nas.vendas']} </h:panelGroup>
+            </p:panel>
+            <p:panel styleClass="metric-card">
+                <h:panelGroup layout="block" styleClass="metric-label"> #{msg['interface.resultado.de.caixa']} </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="metric-value">
                     <h:outputText value="#{dashboardController.resultado}">
                         <f:converter converterId="monetarioConverter"/>
                     </h:outputText>
                 </h:panelGroup>
-                <h:panelGroup layout="inline" styleClass="metric-note" style="font-size: .85rem;"> #{msg['interface.receitas.menos.desembolsos']} </h:panelGroup>
-            </h:panelGroup>
-        </h:panelGroup>
-        <h:panelGroup layout="block" styleClass="dashboard-charts">
-            <p:panel header="#{msg['dashboard.saldo.pontos']}" styleClass="dashboard-chart-panel">
-                <p:chart id="saldoPontos" value="#{dashboardController.graficoPontos}" rendered="#{dashboardController.temSaldoPontos}"
-                    styleClass="dashboard-pie" ariaLabel="#{msg['dashboard.saldo.pontos']}"/>
-                <h:outputText value="#{msg['dashboard.sem.saldo.pontos']}" rendered="#{not dashboardController.temSaldoPontos}"
-                    styleClass="dashboard-chart-empty"/>
+                <h:panelGroup layout="block" styleClass="metric-note"> #{msg['interface.receitas.menos.desembolsos']} </h:panelGroup>
             </p:panel>
-            <p:panel header="#{msg['dashboard.saldo.milhas']}" styleClass="dashboard-chart-panel">
-                <p:chart id="saldoMilhas" value="#{dashboardController.graficoMilhas}" rendered="#{dashboardController.temSaldoMilhas}"
-                    styleClass="dashboard-pie" ariaLabel="#{msg['dashboard.saldo.milhas']}"/>
-                <h:outputText value="#{msg['dashboard.sem.saldo.milhas']}" rendered="#{not dashboardController.temSaldoMilhas}"
-                    styleClass="dashboard-chart-empty"/>
+        </p:panelGrid>
+        <!--<p:panelGrid columns="2" layout="grid" styleClass="dashboard-charts">
+            <p:panel styleClass="chart-card" header="#{msg['dashboard.saldo.pontos']}">
+                <p:chart id="saldoPontos" value="#{dashboardController.graficoPontos}" rendered="#{dashboardController.temSaldoPontos}" ariaLabel="#{msg['dashboard.saldo.pontos']}"/>
+                <h:outputText value="#{msg['dashboard.sem.saldo.pontos']}" rendered="#{not dashboardController.temSaldoPontos}"/>
             </p:panel>
-        </h:panelGroup>
+            <p:panel styleClass="chart-card" header="#{msg['dashboard.saldo.milhas']}">
+                <p:chart id="saldoMilhas" value="#{dashboardController.graficoMilhas}" rendered="#{dashboardController.temSaldoMilhas}" ariaLabel="#{msg['dashboard.saldo.milhas']}"/>
+                <h:outputText value="#{msg['dashboard.sem.saldo.milhas']}" rendered="#{not dashboardController.temSaldoMilhas}"/>
+            </p:panel>
+        </p:panelGrid>-->
+        <p:panel header="#{msg['dashboard.consolidado.titulo']}" styleClass="dashboard-consolidado">
+            <p:dataTable id="consolidados" value="#{dashboardController.consolidados}" var="consolidado"
+                         reflow="true" emptyMessage="#{msg['dashboard.consolidado.vazio']}">
+                <t:column headerText="#{msg['dashboard.consolidado.programa']}" value="#{consolidado.programa.nome}"/>
+                <t:column headerText="#{msg['dashboard.consolidado.acumulado']}" value="#{consolidado.acumulado}"
+                          converter="quantidadeConverter"/>
+                <t:column headerText="#{msg['dashboard.consolidado.saldo']}" value="#{consolidado.saldo}"
+                          converter="quantidadeConverter"/>
+                <t:column headerText="#{msg['dashboard.consolidado.milheiro']}" value="#{consolidado.milheiro}"
+                          converter="monetarioConverter"/>
+            </p:dataTable>
+        </p:panel>
     </ui:define>
 </ui:composition>

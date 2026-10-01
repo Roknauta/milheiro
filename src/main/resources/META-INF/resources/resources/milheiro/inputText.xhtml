@@ -14,10 +14,10 @@
         <cc:clientBehavior name="blur" event="blur" targets="input"/>
     </cc:interface>
     <cc:implementation>
-        <h:panelGroup layout="block" style="display: flex; flex-direction: column; gap: .25rem; min-width: 0; max-width: 100%;">
+        <h:panelGrid columns="1" styleClass="form-field">
             <p:outputLabel for="input" value="#{cc.attrs.label}" rendered="#{not empty cc.attrs.label}"/>
-            <p:inputText id="input" value="#{cc.attrs.value}" label="#{cc.attrs.label}" required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled}" readonly="#{cc.attrs.readonly}" requiredMessage="#{cc.attrs.requiredMessage}" maxlength="#{cc.attrs.maxlength}" placeholder="#{cc.attrs.placeholder}" style="width: 100%; min-width: 0; box-sizing: border-box;"/>
+            <p:inputText id="input" value="#{cc.attrs.value}" label="#{cc.attrs.label}" required="#{cc.attrs.required}" disabled="#{cc.attrs.disabled}" readonly="#{cc.attrs.readonly}" requiredMessage="#{cc.attrs.requiredMessage}" maxlength="#{cc.attrs.maxlength}" placeholder="#{cc.attrs.placeholder}"/>
             <p:message for="input"/>
-        </h:panelGroup>
+        </h:panelGrid>
     </cc:implementation>
 </ui:component>

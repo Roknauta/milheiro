@@ -4,15 +4,11 @@
     template="/WEB-INF/crud.xhtml">
     <ui:param name="controladorCrud" value="#{estornoController}"/>
     <ui:param name="formularioId" value="movimentos"/>
-    <ui:param name="tituloFormulario" value="#{msg['operacao.estornos']}"/>
-    <ui:define name="titulo">#{msg['operacao.estornos']}</ui:define>
-    <ui:define name="descricao">#{msg['operacao.tela.descricao']}</ui:define>
-    <ui:define name="novo">
-        <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus"
-            action="#{estornoController.novo}" process="@this" update=":conteudoCrud" resetValues="true"/>
-    </ui:define>
-    <ui:define name="formulario">
-        <h:panelGroup layout="block" styleClass="crud-fields">
+    <ui:param name="tituloFormulario" value="#{msg['operacao.estorno']}"/>
+    <ui:param name="registroEmEdicao" value="#{estornoController.operacao.id != null}"/>
+    <ui:define name="titulo">#{msg['operacao.estorno']}</ui:define>
+    <ui:define name="editField">
+        <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
             <m:datePicker id="data" value="#{estornoController.operacao.data}" pattern="dd/MM/yyyy"
                 label="#{msg['interface.data.2']}" required="true"/>
             <m:selectOneMenu id="original" value="#{estornoController.operacao.operacaoOriginalId}"
@@ -23,23 +19,22 @@
                 <p:ajax listener="#{estornoController.selecionarOriginal}" process="@this"
                     update=":movimentos:resumoEstorno"/>
             </m:selectOneMenu>
-        </h:panelGroup>
+        </p:panelGrid>
         <p:outputPanel id="resumoEstorno">
-            <p:panel rendered="#{estornoController.operacaoOriginal != null}" header="#{msg['estorno.resumo']}"
-                styleClass="transfer-summary operation-summary">
-                <h:panelGroup layout="block" styleClass="summary-row">
-                    <h:outputText value="#{msg['interface.quantidade.2']}" styleClass="summary-label"/>
+            <p:panel rendered="#{estornoController.operacaoOriginal != null}" header="#{msg['estorno.resumo']}">
+                <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
+                    <h:outputText value="#{msg['interface.quantidade.2']}"/>
                     <h:outputText value="#{estornoController.operacaoOriginal.quantidade}"
-                        converter="quantidadeConverter" styleClass="summary-value"/>
-                </h:panelGroup>
-                <h:panelGroup layout="block" styleClass="summary-row">
-                    <h:outputText value="#{msg['interface.valor.custo.proporcional.r']}" styleClass="summary-label"/>
+                        converter="quantidadeConverter"/>
+                </p:panelGrid>
+                <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
+                    <h:outputText value="#{msg['interface.valor.custo.proporcional.r']}"/>
                     <h:outputText value="#{estornoController.operacaoOriginal.valor}"
-                        converter="monetarioConverter" styleClass="summary-value"/>
-                </h:panelGroup>
+                        converter="monetarioConverter"/>
+                </p:panelGrid>
             </p:panel>
         </p:outputPanel>
-        <h:outputText value="#{msg['estorno.orientacao']}" styleClass="summary-note"/>
+        <h:outputText value="#{msg['estorno.orientacao']}"/>
         <m:inputTextarea id="observacoes" value="#{estornoController.operacao.observacoes}"
             label="#{msg['interface.observacoes']}" maxlength="500" rows="2" autoResize="true"/>
     </ui:define>
@@ -48,14 +43,13 @@
             action="#{estornoController.salvar}" process="@form" update=":conteudoCrud"/>
     </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{estornoController.pesquisaRealizada and not estornoController.editando}"
-            header="#{msg['operacao.estornos']}">
-            <h:outputText value="#{msg['operacao.status.orientacao']}" styleClass="summary-note"/>
+        <p:panel rendered="#{estornoController.pesquisaRealizada and not estornoController.editando}" header="#{msg['crud.resultados']}">
+            <h:outputText value="#{msg['operacao.status.orientacao']}"/>
             <p:dataTable id="registros" value="#{estornoController.registrosEncontrados}" var="item"
                 paginator="true" rows="15" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                showGridlines="true" reflow="true" rowStyleClass="#{item.cancelada ? 'cancelled' : ''}"
+                showGridlines="true" reflow="true"
                 emptyMessage="#{msg['interface.nenhuma.operacao.comece.cadastrando.seus.programas.e.saldos.iniciais.como.acum']}">
-                <p:column headerText="#{msg['interface.opcoes']}" style="width: 5rem; text-align: center;">
+                <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
                     <ui:include src="/WEB-INF/operacoes/status.xhtml"/>
                 </p:column>
                 <t:column headerText="#{msg['operacao.numero']}" value="#{item.id}"/>

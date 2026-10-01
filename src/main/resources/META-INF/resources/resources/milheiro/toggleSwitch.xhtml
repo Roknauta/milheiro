@@ -12,9 +12,9 @@
         <cc:clientBehavior name="change" event="change" targets="input"/>
     </cc:interface>
     <cc:implementation>
-        <h:panelGroup layout="block" styleClass="toggle-field">
-            <p:panelGrid columns="2" layout="tabular" styleClass="toggle-field-grid ui-panelgrid-blank"
-                columnClasses="toggle-label-column,toggle-switch-column">
+        <h:panelGroup layout="block">
+            <p:panelGrid columns="2" layout="tabular" styleClass="ui-panelgrid-blank"
+               >
                 <p:outputLabel for="input" value="#{cc.attrs.label}: "/>
                 <p:toggleSwitch id="input" value="#{cc.attrs.value}"
                     disabled="#{cc.attrs.disabled or cc.attrs.readonly}"

@@ -10,30 +10,29 @@
         <h:outputStylesheet library="css" name="primefaces-custom.css"/>
     </h:head>
     <h:body styleClass="milheiro-app">
-        <h:panelGroup styleClass="app-shell" layout="block">
-            <h:panelGroup aria-label="#{msg['interface.menu.principal']}" styleClass="app-sidebar" layout="block">
-                <m:navigation id="navigation"/>
+        <p:panelGrid columns="2" layout="grid" styleClass="app-shell">
+            <h:panelGroup aria-label="#{msg['interface.menu.principal']}" layout="block" styleClass="app-sidebar">
+                <ui:include src="/WEB-INF/navigation.xhtml"/>
             </h:panelGroup>
-            <h:panelGroup styleClass="app-workspace" layout="block">
+            <h:panelGroup layout="block" styleClass="app-workspace">
                 <p:breadCrumb>
                     <p:menuitem value="#{msg['interface.dashboard']}" outcome="/dashboard"/>
+                    <p:menuitem value="#{layoutController.grupoAtual}" rendered="#{not empty layoutController.grupoAtual}" disabled="true"/>
+                    <p:menuitem value="#{layoutController.paginaAtual}" rendered="#{not empty layoutController.paginaAtual}" disabled="true"/>
                 </p:breadCrumb>
                 <p:panel styleClass="page-panel">
                     <f:facet name="header">
                         <ui:insert name="titulo"/>
                     </f:facet>
-                    <h:panelGroup layout="block" styleClass="page-description">
-                        <ui:insert name="descricao"/>
-                    </h:panelGroup>
                     <p:messages id="mensagens" showDetail="false">
                         <p:autoUpdate/>
                     </p:messages>
                     <ui:insert name="conteudo"/>
                 </p:panel>
-                <h:panelGroup layout="block" styleClass="app-footer"> #{msg['interface.milheiro.controle.de.pontos.e.milhas']}
-                </h:panelGroup>
+                <!--<h:panelGroup layout="block" styleClass="app-footer"> #{msg['interface.milheiro.controle.de.pontos.e.milhas']}
+                </h:panelGroup>-->
             </h:panelGroup>
-        </h:panelGroup>
+        </p:panelGrid>
         <m:confirmation/></h:body>
 </f:view>
 </html>

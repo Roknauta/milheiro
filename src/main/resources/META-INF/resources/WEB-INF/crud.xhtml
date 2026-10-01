@@ -4,19 +4,23 @@
     <ui:param name="crudController" value="#{empty controladorCrud ? carteira : controladorCrud}"/>
     <ui:define name="conteudo">
         <h:panelGroup id="conteudoCrud" layout="block">
-            <h:form id="pesquisa" rendered="#{not crudController.editando}">
-                <p:outputPanel styleClass="crud-actions"><ui:insert name="novo"/></p:outputPanel>
-                <p:panel header="#{msg['interface.pesquisa']}" styleClass="crud-panel">
-                    <h:panelGroup layout="block" styleClass="crud-fields">
+            <h:form styleClass="crud-search" id="pesquisa" rendered="#{not crudController.editando}">
+                <p:outputPanel styleClass="crud-actions">
+                    <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus"
+                                     action="#{crudController.novo}" process="@this"
+                                     update=":conteudoCrud" resetValues="true"/>
+                </p:outputPanel>
+                <p:panel header="#{msg['interface.pesquisa']}">
+                    <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
                         <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{crudController.filtroPesquisa}"/>
-                    </h:panelGroup>
+                    </p:panelGrid>
                     <p:commandButton id="pesquisar" value="#{msg['interface.pesquisar']}" icon="pi pi-search"
                                      action="#{crudController.pesquisar}" process="@form" update=":conteudoCrud"/>
                 </p:panel>
             </h:form>
-            <h:form id="#{formularioId}">
-                <p:panel rendered="#{crudController.editando}" header="#{tituloFormulario}" styleClass="crud-panel">
-                    <ui:insert name="formulario"/>
+            <h:form id="#{formularioId}" styleClass="crud-form">
+                <p:panel rendered="#{crudController.editando}" header="#{registroEmEdicao ? msg['crud.editando'] : msg['crud.cadastrando']} #{tituloFormulario}">
+                    <ui:insert name="editField"/>
                     <p:outputPanel styleClass="crud-footer">
                         <ui:insert name="salvar"/>
                         <p:commandButton id="cancelar" value="#{msg['interface.voltar.pesquisa']}" icon="pi pi-times"

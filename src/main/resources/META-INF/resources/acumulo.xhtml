@@ -1,0 +1,62 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:fn="jakarta.tags.functions"
+                template="/WEB-INF/crud.xhtml">
+    <ui:param name="controladorCrud" value="#{acumuloController}"/>
+    <ui:param name="formularioId" value="movimentos"/>
+    <ui:param name="tituloFormulario" value="#{msg['operacao.acumulo']}"/>
+    <ui:param name="registroEmEdicao" value="#{acumuloController.operacao.id != null}"/>
+    <ui:define name="titulo">#{msg['operacao.acumulo']}</ui:define>
+    <ui:define name="editField">
+        <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
+            <m:datePicker id="data" value="#{acumuloController.operacao.data}" label="#{msg['interface.data.2']}"
+                          pattern="dd/MM/yyyy" required="true"/>
+            <m:programaFidelidadeAutoComplete id="programa" value="#{acumuloController.programaOperacao}"
+                                              label="#{msg['interface.programa']}" required="true" programas="#{acumuloController.programasAtivos}">
+            </m:programaFidelidadeAutoComplete>
+            <m:inputNumber id="quantidade" value="#{acumuloController.operacao.quantidade}"
+                           label="#{msg['interface.quantidade.de.pontos']}" required="true" decimalPlaces="0"
+                           decimalSeparator="," thousandSeparator="." minValue="1" maxValue="999999999999"/>
+            <m:inputNumber id="valor" value="#{acumuloController.operacao.valor}"
+                           label="#{msg['interface.valor.total.pago.r']}" required="true" decimalPlaces="2"
+                           decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999"/>
+        </p:panelGrid>
+        <h:outputText value="#{msg['interface.informe.o.valor.total.pago.ja.incluindo.eventuais.taxas']}"/>
+        <m:inputTextarea id="observacoes" value="#{acumuloController.operacao.observacoes}"
+                         label="#{msg['interface.observacoes']}" maxlength="500" rows="2" autoResize="true"/>
+    </ui:define>
+    <ui:define name="salvar">
+        <p:commandButton id="salvar" value="#{msg['interface.salvar.operacao']}" icon="pi pi-save"
+                         action="#{acumuloController.salvar}" process="@form" update=":conteudoCrud"/>
+    </ui:define>
+    <ui:define name="resultados">
+<!--        <p:panel rendered="#{acumuloController.pesquisaRealizada and not acumuloController.editando}" header="#{msg['crud.resultados']}">-->
+<!--            <h:outputText value="#{msg['operacao.status.orientacao']}"/>-->
+            <p:dataTable id="registros" value="#{acumuloController.registrosEncontrados}" var="item"
+                         paginator="true" rows="15" paginatorPosition="top" paginatorAlwaysVisible="false"
+                         showGridlines="true" reflow="true" rendered="#{acumuloController.pesquisaRealizada and not acumuloController.editando}"
+                         emptyMessage="#{msg['interface.nenhuma.operacao.comece.cadastrando.seus.programas.e.saldos.iniciais.como.acum']}">
+                <f:facet name="header">
+                    <h:outputText value="#{msg['interface.acumulado']}"/>
+                </f:facet>
+                <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
+                    <ui:include src="/WEB-INF/operacoes/status.xhtml"/>
+                </p:column>
+                <t:column headerText="#{msg['operacao.numero']}" value="#{item.id}"/>
+                <t:column headerText="#{msg['interface.data.2']}" value="#{item.data}">
+                    <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                </t:column>
+                <t:column headerText="#{msg['interface.status']}" value="#{item.status.descricao}"/>
+                <t:column headerText="#{msg['interface.programa']}" value="#{item.programa.nome}"/>
+                <t:column headerText="#{msg['operacao.vinculo']}" value="#{item.vinculoTransferencia}"/>
+                <t:column headerText="#{msg['operacao.parcela']}" value="#{item.parcelaDescricao}"/>
+                <t:column headerText="#{msg['interface.quantidade.2']}" value="#{item.quantidade}" converter="quantidadeConverter"/>
+                <t:column headerText="#{msg['interface.valor.total.pago.r']}" value="#{item.valor}" converter="monetarioConverter"/>
+                <t:column headerText="#{msg['interface.observacoes']}" value="#{item.observacoes}"/>
+                <f:facet name="footer">
+                    <h:outputText value="#{fn:length(acumuloController.registrosEncontrados)} registros encontrados" />
+                </f:facet>
+            </p:dataTable>
+<!--        </p:panel>-->
+    </ui:define>
+</ui:composition>

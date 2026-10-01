@@ -92,6 +92,10 @@ public class CarteiraBean implements Serializable {
         });
     }
 
+    public void novo() {
+        novoFator();
+    }
+
     public void novoFator() {
         editando = true;
         fator = new FatorConversao();

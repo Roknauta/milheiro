@@ -1,0 +1,18 @@
+<ui:component xmlns:ui="jakarta.faces.facelets"
+              xmlns:cc="jakarta.faces.composite"
+              xmlns:h="jakarta.faces.html"
+              xmlns:f="jakarta.faces.core">
+    <cc:interface>
+        <cc:attribute name="label" required="true"/>
+        <cc:attribute name="value" required="true"/>
+        <cc:attribute name="converter" required="true"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:panelGroup layout="block" styleClass="resumo-item">
+            <h:outputText value="#{cc.attrs.label}" styleClass="resumo-label"/>
+            <h:outputText value="#{cc.attrs.value}" styleClass="resumo-valor">
+                <f:converter converterId="#{cc.attrs.converter}"/>
+            </h:outputText>
+        </h:panelGroup>
+    </cc:implementation>
+</ui:component>

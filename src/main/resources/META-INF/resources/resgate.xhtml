@@ -4,30 +4,24 @@
     template="/WEB-INF/crud.xhtml">
     <ui:param name="controladorCrud" value="#{resgateController}"/>
     <ui:param name="formularioId" value="movimentos"/>
-    <ui:param name="tituloFormulario" value="#{msg['operacao.resgates']}"/>
-    <ui:define name="titulo">#{msg['operacao.resgates']}</ui:define>
-    <ui:define name="descricao">#{msg['operacao.tela.descricao']}</ui:define>
-    <ui:define name="novo">
-        <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus"
-            action="#{resgateController.novo}" process="@this" update=":conteudoCrud" resetValues="true"/>
-    </ui:define>
-    <ui:define name="formulario">
-        <h:panelGroup layout="block" styleClass="crud-fields">
+    <ui:param name="tituloFormulario" value="#{msg['operacao.resgate']}"/>
+    <ui:param name="registroEmEdicao" value="#{resgateController.operacao.id != null}"/>
+    <ui:define name="titulo">#{msg['operacao.resgate']}</ui:define>
+    <ui:define name="editField">
+        <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
             <m:datePicker id="data" value="#{resgateController.operacao.data}" label="#{msg['interface.data.2']}"
                 pattern="dd/MM/yyyy" required="true"/>
-            <m:selectOneMenu id="programa" value="#{resgateController.programaOperacao}"
-                label="#{msg['interface.programa']}" required="true">
-                <f:selectItem itemLabel="#{msg['interface.selecione']}" itemValue="#{null}" noSelectionOption="true"/>
-                <f:selectItems value="#{resgateController.programasAtivos}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}"/>
-            </m:selectOneMenu>
+            <m:programaFidelidadeAutoComplete id="programa" value="#{resgateController.programaOperacao}"
+                label="#{msg['interface.programa']}" required="true" programas="#{resgateController.programasAtivos}">
+            </m:programaFidelidadeAutoComplete>
             <m:inputNumber id="quantidade" value="#{resgateController.operacao.quantidade}"
                 label="#{msg['interface.quantidade.de.pontos']}" required="true" decimalPlaces="0"
                 decimalSeparator="," thousandSeparator="." minValue="1" maxValue="999999999999"/>
             <m:inputNumber id="valor" value="#{resgateController.operacao.taxas}"
                 label="#{msg['interface.taxas.ou.complemento.pago.r']}" required="true" decimalPlaces="2"
                 decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999"/>
-        </h:panelGroup>
-        <h:outputText value="#{msg['interface.informe.somente.taxas.ou.complemento.efetivamente.pagos.em.dinheiro.sem.pagame']}" styleClass="summary-note"/>
+        </p:panelGrid>
+        <h:outputText value="#{msg['interface.informe.somente.taxas.ou.complemento.efetivamente.pagos.em.dinheiro.sem.pagame']}"/>
         <m:inputTextarea id="observacoes" value="#{resgateController.operacao.observacoes}"
             label="#{msg['interface.observacoes']}" maxlength="500" rows="2" autoResize="true"/>
     </ui:define>
@@ -36,14 +30,13 @@
             action="#{resgateController.salvar}" process="@form" update=":conteudoCrud"/>
     </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{resgateController.pesquisaRealizada and not resgateController.editando}"
-            header="#{msg['operacao.resgates']}">
-            <h:outputText value="#{msg['operacao.status.orientacao']}" styleClass="summary-note"/>
+        <p:panel rendered="#{resgateController.pesquisaRealizada and not resgateController.editando}" header="#{msg['crud.resultados']}">
+            <h:outputText value="#{msg['operacao.status.orientacao']}"/>
             <p:dataTable id="registros" value="#{resgateController.registrosEncontrados}" var="item"
                 paginator="true" rows="15" paginatorPosition="bottom" paginatorAlwaysVisible="false"
-                showGridlines="true" reflow="true" rowStyleClass="#{item.cancelada ? 'cancelled' : ''}"
+                showGridlines="true" reflow="true"
                 emptyMessage="#{msg['interface.nenhuma.operacao.comece.cadastrando.seus.programas.e.saldos.iniciais.como.acum']}">
-                <p:column headerText="#{msg['interface.opcoes']}" style="width: 5rem; text-align: center;">
+                <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
                     <ui:include src="/WEB-INF/operacoes/status.xhtml"/>
                 </p:column>
                 <t:column headerText="#{msg['operacao.numero']}" value="#{item.id}"/>

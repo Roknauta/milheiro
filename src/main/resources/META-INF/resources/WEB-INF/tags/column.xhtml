@@ -1,16 +1,15 @@
 <ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:c="jakarta.tags.core">
     <!-- Tag Facelets: mantém p:column diretamente na árvore da tabela, sem NamingContainer. -->
-    <p:column headerText="#{headerText}" footerText="#{footerText}"
+    <p:column headerText="#{headerText}"
               sortBy="#{sortBy}" filterBy="#{filterBy}"
               sortable="#{sortable eq null ? false : sortable}"
               filterable="#{filterable eq null ? false : filterable}"
               filterMatchMode="#{empty filterMatchMode ? 'contains' : filterMatchMode}"
-              style="#{style}" styleClass="#{styleClass}"
               rendered="#{rendered eq null ? true : rendered}">
-        <f:facet name="header">
-            <h:outputText value="#{headerText}" style="display: block; text-align: center;"/>
-        </f:facet>
-        <h:outputText value="#{value}" style="#{textStyle}">
+        <!--<f:facet name="header">
+            <h:outputText value="#{headerText}"/>
+        </f:facet>-->
+        <h:outputText value="#{value}">
             <c:if test="#{not empty converter}">
                 <f:converter converterId="#{converter}"/>
             </c:if>

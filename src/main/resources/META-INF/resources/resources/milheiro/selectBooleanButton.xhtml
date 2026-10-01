@@ -1,0 +1,20 @@
+<ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite"
+              xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html">
+    <cc:interface>
+        <cc:attribute name="value" required="true"/>
+        <cc:attribute name="label" default=""/>
+        <cc:attribute name="disabled" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="onLabel" default="#{msg['componente.booleano.sim']}"/>
+        <cc:attribute name="offLabel" default="#{msg['componente.booleano.nao']}"/>
+        <cc:editableValueHolder name="input" targets="input"/>
+        <cc:clientBehavior name="change" event="change" targets="input" default="true"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:panelGrid columns="1" styleClass="form-field">
+            <p:outputLabel for="input" value="#{cc.attrs.label}" rendered="#{not empty cc.attrs.label}"/>
+            <p:selectBooleanButton id="input" value="#{cc.attrs.value}" disabled="#{cc.attrs.disabled}"
+                                   onLabel="#{cc.attrs.onLabel}" offLabel="#{cc.attrs.offLabel}"/>
+            <p:message for="input"/>
+        </h:panelGrid>
+    </cc:implementation>
+</ui:component>
