@@ -23,5 +23,12 @@ public interface OperacaoRepository extends JpaRepository<Operacao, Long> {
 
     List<Operacao> findAllByOrderByDataAscIdAsc();
 
+    @Query("select count(e) > 0 from Estorno e where e.operacaoOriginal.id = :id")
+    boolean possuiEstornoVinculado(@org.springframework.data.repository.query.Param("id") Long id);
+
+    @Query("select count(e) > 0 from Estorno e where e.operacaoOriginal.id = :id and e.status = :status")
+    boolean possuiEstornoConfirmado(@org.springframework.data.repository.query.Param("id") Long id,
+                                  @org.springframework.data.repository.query.Param("status") com.roknauta.milheiro.domain.StatusOperacao status);
+
 
 }

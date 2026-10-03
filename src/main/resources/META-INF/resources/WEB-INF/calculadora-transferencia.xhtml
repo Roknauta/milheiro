@@ -5,13 +5,13 @@
                 <h:outputText value="#{msg['interface.dados.da.transferencia']}"/>
                 <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
                     <h:panelGroup layout="block">
-                        <m:programaFidelidadeAutoComplete id="origem" value="#{calculadora.origemId}" label="#{msg['interface.origem']}" programas="#{calculadora.programas}">
+                        <m:programaFidelidadeAutoComplete id="origem" value="#{calculadora.origemId}" label="#{msg['interface.origem']}">
                             <p:ajax event="itemSelect" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
                 <p:ajax event="clear" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
                         </m:programaFidelidadeAutoComplete>
                     </h:panelGroup>
                     <h:panelGroup layout="block">
-                        <m:programaFidelidadeAutoComplete id="destino" value="#{calculadora.destinoId}" label="#{msg['interface.destino.2']}" programas="#{calculadora.programas}">
+                        <m:programaFidelidadeAutoComplete id="destino" value="#{calculadora.destinoId}" label="#{msg['interface.destino.2']}">
                             <p:ajax event="itemSelect" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
                 <p:ajax event="clear" listener="#{calculadora.selecionarProgramas(receber)}" process="@form" update=":simulacao:fatorArea :simulacao:bonus :simulacao:resumo" resetValues="true"/>
                         </m:programaFidelidadeAutoComplete>

@@ -1,5 +1,7 @@
 package com.roknauta.milheiro.domain;
 
+import com.roknauta.milheiro.web.Msg;
+
 public enum TipoOperacao {
     ACUMULO("mensagem.acumulo"), TRANSFERENCIA("mensagem.transferencia"), VENDA("mensagem.venda"), RESGATE(
         "mensagem.resgate"), ESTORNO("mensagem.estorno");
@@ -10,6 +12,6 @@ public enum TipoOperacao {
     }
 
     public String getDescricao() {
-        return com.roknauta.milheiro.web.Textos.get(descricao);
+        return Msg.get(descricao);
     }
 }

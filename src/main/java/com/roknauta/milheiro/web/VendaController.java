@@ -1,19 +1,22 @@
 package com.roknauta.milheiro.web;
 
-import com.roknauta.milheiro.domain.Venda;
-import com.roknauta.milheiro.domain.TipoOperacao;
-import com.roknauta.milheiro.service.OperacaoService;
-import org.springframework.context.annotation.Scope;
+import com.roknauta.milheiro.dto.crud.VendaDTO;
+import com.roknauta.milheiro.service.crud.VendaService;
+import com.roknauta.milheiro.web.crud.CrudControllerBase;
+import jakarta.faces.view.ViewScoped;
 import org.springframework.stereotype.Component;
 
-@Component("vendaController")
-@Scope("view")
-public class VendaController extends OperacaoController<Venda> {
-    public VendaController(OperacaoService service) {
-        super(service, TipoOperacao.VENDA, Venda.class);
-    }
+@Component
+@ViewScoped
+public class VendaController extends CrudControllerBase<VendaDTO, VendaService> {
+    public VendaController(VendaService service) { super(service); }
+
     @Override
-    protected Venda salvarOperacao() {
-        return service.salvarVenda(operacao, programaOperacao);
+    public String pageTitle() { return Msg.get("operacao.venda"); }
+
+    public void cancelar(VendaDTO dto) {
+        service.cancelar(dto);
+        atualizarResultados();
+        addInfoMessage("interface.dados.salvos");
     }
 }

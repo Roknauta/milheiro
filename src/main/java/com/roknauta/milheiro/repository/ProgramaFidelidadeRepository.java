@@ -10,6 +10,8 @@ public interface ProgramaFidelidadeRepository extends JpaRepository<ProgramaFide
 
     List<ProgramaFidelidade> findAllByOrderByNomeAsc();
 
+    List<ProgramaFidelidade> findByAtivoTrueAndNomeContainingIgnoreCaseOrderByNomeAsc(String nome);
+
     boolean existsByNomeIgnoreCaseAndIdNot(String nome, Long id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

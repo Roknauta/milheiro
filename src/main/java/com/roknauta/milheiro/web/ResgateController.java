@@ -1,23 +1,22 @@
 package com.roknauta.milheiro.web;
 
-import com.roknauta.milheiro.domain.Resgate;
-import com.roknauta.milheiro.domain.TipoOperacao;
-import com.roknauta.milheiro.service.OperacaoService;
-import org.springframework.context.annotation.Scope;
+import com.roknauta.milheiro.dto.crud.ResgateDTO;
+import com.roknauta.milheiro.service.crud.ResgateService;
+import com.roknauta.milheiro.web.crud.CrudControllerBase;
+import jakarta.faces.view.ViewScoped;
 import org.springframework.stereotype.Component;
 
-@Component("resgateController")
-@Scope("view")
-public class ResgateController extends OperacaoController<Resgate> {
-    public ResgateController(OperacaoService service) {
-        super(service, TipoOperacao.RESGATE, Resgate.class);
-    }
+@Component
+@ViewScoped
+public class ResgateController extends CrudControllerBase<ResgateDTO, ResgateService> {
+    public ResgateController(ResgateService service) { super(service); }
+
     @Override
-    protected Resgate salvarOperacao() {
-        return service.salvarResgate(operacao, programaOperacao);
-    }
-    @Override
-    protected void prepararEdicao(Resgate item) {
-        operacao.setTaxas(item.getValor());
+    public String pageTitle() { return Msg.get("operacao.resgate"); }
+
+    public void cancelar(ResgateDTO dto) {
+        service.cancelar(dto);
+        atualizarResultados();
+        addInfoMessage("interface.dados.salvos");
     }
 }

@@ -1,5 +1,6 @@
 package com.roknauta.milheiro.config;
 
+import com.roknauta.milheiro.web.Msg;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,7 +28,7 @@ public class HsqlServerConfig {
         String expected = "jdbc:hsqldb:hsql://127.0.0.1:" + port + "/" + name;
         String configured = properties.getUrl();
         if (configured == null || !configured.replace("//localhost:", "//127.0.0.1:").equals(expected)) {
-            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.formatar("banco.endereco.incompativel", expected));
+            throw new IllegalArgumentException(Msg.formatar("banco.endereco.incompativel", expected));
         }
         return server;
     }

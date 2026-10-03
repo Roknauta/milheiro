@@ -36,12 +36,12 @@
                             pt:aria-current="#{view.viewId eq '/receber.xhtml' ? 'page' : null}"/>
             </p:submenu>
             <p:submenu label="#{msg['interface.cadastros']}" expanded="true">
-                <p:menuitem value="#{msg['interface.programas.de.fidelidade']}" outcome="/programa-fidelidade" icon="pi pi-wallet"
+                <p:menuitem value="#{msg['programa.fidelidade']}" outcome="/programa-fidelidade" icon="pi pi-wallet"
                             styleClass="#{view.viewId eq '/programa-fidelidade.xhtml' ? 'menu-atual' : ''}"
                             pt:aria-current="#{view.viewId eq '/programa-fidelidade.xhtml' ? 'page' : null}"/>
-                <p:menuitem value="#{msg['interface.fatores.de.conversao']}" outcome="/fatores" icon="pi pi-percentage"
-                            styleClass="#{view.viewId eq '/fatores.xhtml' ? 'menu-atual' : ''}"
-                            pt:aria-current="#{view.viewId eq '/fatores.xhtml' ? 'page' : null}"/>
+                <p:menuitem value="#{msg['fator.conversao']}" outcome="/fator-conversao" icon="pi pi-percentage"
+                            styleClass="#{view.viewId eq '/fator-conversao.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/fator-conversao.xhtml' ? 'page' : null}"/>
             </p:submenu>
         </p:panelMenu>
 <!--    </p:panel>-->

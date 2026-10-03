@@ -1,33 +1,36 @@
 <ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
-                xmlns:p="http://primefaces.org/ui" xmlns:m="jakarta.faces.composite/resources/milheiro"
+                xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
-    <ui:param name="crudController" value="#{empty controladorCrud ? carteira : controladorCrud}"/>
+
+    <!--@elvariable id="crudController" type="com.roknauta.milheiro.web.crud.CrudControllerBase"-->
     <ui:define name="conteudo">
         <h:panelGroup id="conteudoCrud" layout="block">
-            <h:form styleClass="crud-search" id="pesquisa" rendered="#{not crudController.editando}">
+            <h:form styleClass="crud-search" id="pesquisa" rendered="#{!crudController.editing}">
                 <p:outputPanel styleClass="crud-actions">
-                    <p:commandButton id="novo" value="#{msg['interface.novo']}" icon="pi pi-plus"
+                    <p:commandButton id="novo" value="#{msg['novo']}" icon="pi pi-plus"
                                      action="#{crudController.novo}" process="@this"
                                      update=":conteudoCrud" resetValues="true"/>
                 </p:outputPanel>
                 <p:panel header="#{msg['interface.pesquisa']}">
                     <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
-                        <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{crudController.filtroPesquisa}"/>
+                        <ui:insert name="searchField"/>
                     </p:panelGrid>
                     <p:commandButton id="pesquisar" value="#{msg['interface.pesquisar']}" icon="pi pi-search"
                                      action="#{crudController.pesquisar}" process="@form" update=":conteudoCrud"/>
                 </p:panel>
+                <p:spacer height="20"/>
+                <ui:insert name="resultados"/>
             </h:form>
-            <h:form id="#{formularioId}" styleClass="crud-form">
-                <p:panel rendered="#{crudController.editando}" header="#{registroEmEdicao ? msg['crud.editando'] : msg['crud.cadastrando']} #{tituloFormulario}">
+            <h:form id="#{formId}" styleClass="crud-form">
+                <p:panel rendered="#{crudController.editing}" header="#{crudController.editForm.id!=null ? msg['crud.editando'] : msg['crud.cadastrando']} #{crudController.pageTitle()}">
                     <ui:insert name="editField"/>
                     <p:outputPanel styleClass="crud-footer">
-                        <ui:insert name="salvar"/>
-                        <p:commandButton id="cancelar" value="#{msg['interface.voltar.pesquisa']}" icon="pi pi-times"
+                        <p:commandButton value="#{msg['salvar']}" icon="pi pi-save" action="#{crudController.save}" update=":conteudoCrud" process="@form"
+                                         id="salvar"/>
+                        <p:commandButton id="cancelar" value="#{msg['calcelar']}" icon="pi pi-times"
                                          action="#{crudController.voltarPesquisa}" process="@this" update=":conteudoCrud" resetValues="true"/>
                     </p:outputPanel>
                 </p:panel>
-                <ui:insert name="resultados"/>
             </h:form>
         </h:panelGroup>
     </ui:define>

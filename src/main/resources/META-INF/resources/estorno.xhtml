@@ -2,16 +2,17 @@
     xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
     xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
     template="/WEB-INF/crud.xhtml">
-    <ui:param name="controladorCrud" value="#{estornoController}"/>
-    <ui:param name="formularioId" value="movimentos"/>
-    <ui:param name="tituloFormulario" value="#{msg['operacao.estorno']}"/>
-    <ui:param name="registroEmEdicao" value="#{estornoController.operacao.id != null}"/>
+    <ui:param name="crudController" value="#{estornoController}"/>
+    <ui:param name="formId" value="movimentos"/>
     <ui:define name="titulo">#{msg['operacao.estorno']}</ui:define>
+    <ui:define name="searchField">
+        <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{estornoController.searchForm.filtro}"/>
+    </ui:define>
     <ui:define name="editField">
         <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
-            <m:datePicker id="data" value="#{estornoController.operacao.data}" pattern="dd/MM/yyyy"
+            <m:datePicker id="data" value="#{estornoController.editForm.data}" pattern="dd/MM/yyyy"
                 label="#{msg['interface.data.2']}" required="true"/>
-            <m:selectOneMenu id="original" value="#{estornoController.operacao.operacaoOriginalId}"
+            <m:selectOneMenu id="original" value="#{estornoController.editForm.operacaoOriginalId}"
                 label="#{msg['estorno.operacao.original']}" required="true">
                 <f:selectItem itemLabel="#{msg['interface.selecione']}" itemValue="#{null}" noSelectionOption="true"/>
                 <f:selectItems value="#{estornoController.operacoesEstornaveis}" var="o" itemValue="#{o.id}"
@@ -21,31 +22,27 @@
             </m:selectOneMenu>
         </p:panelGrid>
         <p:outputPanel id="resumoEstorno">
-            <p:panel rendered="#{estornoController.operacaoOriginal != null}" header="#{msg['estorno.resumo']}">
+            <p:panel rendered="#{estornoController.editForm.operacaoOriginal != null}" header="#{msg['estorno.resumo']}">
                 <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
                     <h:outputText value="#{msg['interface.quantidade.2']}"/>
-                    <h:outputText value="#{estornoController.operacaoOriginal.quantidade}"
+                    <h:outputText value="#{estornoController.editForm.operacaoOriginal.quantidade}"
                         converter="quantidadeConverter"/>
                 </p:panelGrid>
                 <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
                     <h:outputText value="#{msg['interface.valor.custo.proporcional.r']}"/>
-                    <h:outputText value="#{estornoController.operacaoOriginal.valor}"
+                    <h:outputText value="#{estornoController.editForm.operacaoOriginal.valor}"
                         converter="monetarioConverter"/>
                 </p:panelGrid>
             </p:panel>
         </p:outputPanel>
         <h:outputText value="#{msg['estorno.orientacao']}"/>
-        <m:inputTextarea id="observacoes" value="#{estornoController.operacao.observacoes}"
+        <m:inputTextarea id="observacoes" value="#{estornoController.editForm.observacoes}"
             label="#{msg['interface.observacoes']}" maxlength="500" rows="2" autoResize="true"/>
     </ui:define>
-    <ui:define name="salvar">
-        <p:commandButton id="salvar" value="#{msg['interface.salvar.operacao']}" icon="pi pi-save"
-            action="#{estornoController.salvar}" process="@form" update=":conteudoCrud"/>
-    </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{estornoController.pesquisaRealizada and not estornoController.editando}" header="#{msg['crud.resultados']}">
+        <p:panel rendered="#{estornoController.pesquisaRealizada and not estornoController.editing}" header="#{msg['crud.resultados']}">
             <h:outputText value="#{msg['operacao.status.orientacao']}"/>
-            <p:dataTable id="registros" value="#{estornoController.registrosEncontrados}" var="item"
+            <p:dataTable id="registros" value="#{estornoController.result}" var="item"
                 paginator="true" rows="15" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                 showGridlines="true" reflow="true"
                 emptyMessage="#{msg['interface.nenhuma.operacao.comece.cadastrando.seus.programas.e.saldos.iniciais.como.acum']}">

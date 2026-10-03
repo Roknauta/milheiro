@@ -26,6 +26,8 @@ import java.util.Objects;
 public class CalculadoraBean implements Serializable {
 
     private final OperacaoService service;
+    private final com.roknauta.milheiro.service.crud.ProgramaFidelidadeService programaService;
+    private final com.roknauta.milheiro.service.crud.FatorConversaoService fatorService;
     private List<ProgramaFidelidade> programas;
     private List<Resumo> resumos;
     private Long origemId, destinoId;
@@ -43,13 +45,17 @@ public class CalculadoraBean implements Serializable {
     private boolean calculado;
     private boolean fatorDoCadastro;
 
-    public CalculadoraBean(OperacaoService service) {
+    public CalculadoraBean(OperacaoService service,
+                           com.roknauta.milheiro.service.crud.ProgramaFidelidadeService programaService,
+                           com.roknauta.milheiro.service.crud.FatorConversaoService fatorService) {
         this.service = service;
+        this.programaService = programaService;
+        this.fatorService = fatorService;
     }
 
     @PostConstruct
     public void carregar() {
-        programas = service.programas().stream().filter(ProgramaFidelidade::isAtivo).toList();
+        programas = programaService.ativos();
         resumos = service.resumos();
     }
 
@@ -68,7 +74,7 @@ public class CalculadoraBean implements Serializable {
         fator = null;
         bonus = BigDecimal.ZERO;
         fatorDoCadastro = false;
-        for (FatorConversao f : service.fatores()) {
+        for (FatorConversao f : fatorService.listar()) {
             if (Objects.equals(f.getOrigem().getId(), origemId) && Objects.equals(f.getDestino().getId(), destinoId)) {
                 fator = formatar(f.getPontosOrigem()) + " : " + formatar(f.getPontosDestino());
                 fatorDoCadastro = true;
@@ -85,13 +91,13 @@ public class CalculadoraBean implements Serializable {
     private BigDecimal lerParte(String texto) {
         // Sem agrupadores: a vírgula ou o ponto indicam a parte decimal.
         if (!texto.trim().matches("[0-9]+([,.][0-9]{1,3})?")) {
-            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+            throw new IllegalArgumentException(Msg.get(
                 "interface.use.o.fator.como.origem.destino.com.ate.tres.casas.decimais.ex.3.500.1.000"));
         }
         BigDecimal valor = new BigDecimal(texto.trim().replace(',', '.'));
         if (valor.signum() <= 0)
             throw new IllegalArgumentException(
-                com.roknauta.milheiro.web.Textos.get("interface.as.duas.partes.do.fator.devem.ser.maiores.que.zero"));
+                Msg.get("interface.as.duas.partes.do.fator.devem.ser.maiores.que.zero"));
         return valor;
     }
 
@@ -102,17 +108,17 @@ public class CalculadoraBean implements Serializable {
         pontosTransferir = pontosCreditar = percentual = null;
         gastoPercentual = valorDestino = null;
         aviso = null;
-        orientacao = com.roknauta.milheiro.web.Textos.get("interface.selecione.origem.e.destino.para.comecar");
+        orientacao = Msg.get("interface.selecione.origem.e.destino.para.comecar");
         Resumo origem = getOrigem();
         if (origem == null || destinoId == null)
             return;
         if (Objects.equals(origemId, destinoId)) {
             orientacao =
-                com.roknauta.milheiro.web.Textos.get("interface.escolha.programas.diferentes.para.origem.e.destino");
+                Msg.get("interface.escolha.programas.diferentes.para.origem.e.destino");
             return;
         }
         if (fator == null || fator.isBlank()) {
-            orientacao = com.roknauta.milheiro.web.Textos.get(
+            orientacao = Msg.get(
                 "interface.informe.o.fator.de.conversao.para.este.par.de.programas");
             return;
         }
@@ -120,18 +126,18 @@ public class CalculadoraBean implements Serializable {
             String[] partes = fator.split(":", -1);
             if (partes.length > 2)
                 throw new IllegalArgumentException(
-                    com.roknauta.milheiro.web.Textos.get("interface.informe.o.fator.como.origem.destino"));
+                    Msg.get("interface.informe.o.fator.como.origem.destino"));
             BigDecimal proporcaoOrigem = lerParte(partes[0]);
             BigDecimal proporcaoDestino = partes.length == 1 ? BigDecimal.ONE : lerParte(partes[1]);
             if (pontos == null || pontos.signum() <= 0) {
                 orientacao = receber
-                    ? com.roknauta.milheiro.web.Textos.get("interface.informe.os.pontos.que.deseja.receber")
-                    : com.roknauta.milheiro.web.Textos.get("interface.informe.os.pontos.a.transferir");
+                    ? Msg.get("interface.informe.os.pontos.que.deseja.receber")
+                    : Msg.get("interface.informe.os.pontos.a.transferir");
                 return;
             }
             if (bonus == null || bonus.signum() < 0) {
                 orientacao =
-                    com.roknauta.milheiro.web.Textos.get("interface.informe.um.bonus.valido.zero.quando.nao.houver");
+                    Msg.get("interface.informe.um.bonus.valido.zero.quando.nao.houver");
                 return;
             }
             ResultadoTransferencia resultado = TransferenciaHelper.calcular(
@@ -148,7 +154,7 @@ public class CalculadoraBean implements Serializable {
             gastoPercentual = resultado.custoOrigem();
             valorDestino = resultado.custoTotal();
             if (pontosTransferir.compareTo(origem.getSaldo()) > 0)
-                aviso = com.roknauta.milheiro.web.Textos.get(
+                aviso = Msg.get(
                     "interface.os.pontos.necessarios.superam.o.saldo.disponivel.na.origem.este.resultado.e.ap");
             calculado = true;
             orientacao = null;

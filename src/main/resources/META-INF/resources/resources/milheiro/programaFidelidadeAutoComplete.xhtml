@@ -1,8 +1,7 @@
 <ui:component xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite"
     xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html">
-    <cc:interface componentType="programaFidelidadeAutoComplete">
+    <cc:interface>
         <cc:attribute name="value" required="true"/>
-        <cc:attribute name="programas" required="true"/>
         <cc:attribute name="label" default=""/>
         <cc:attribute name="required" type="java.lang.Boolean" default="false"/>
         <cc:attribute name="disabled" type="java.lang.Boolean" default="false"/>
@@ -14,8 +13,8 @@
     <cc:implementation>
         <h:panelGrid columns="1" styleClass="form-field">
             <p:outputLabel for="input" value="#{cc.attrs.label}" rendered="#{not empty cc.attrs.label}"/>
-            <p:autoComplete id="input" value="#{cc.attrs.value}" completeMethod="#{cc.completar}"
-                var="programaId" itemValue="#{programaId}" itemLabel="#{cc.nome(programaId)}"
+            <p:autoComplete id="input" value="#{cc.attrs.value}" completeMethod="#{crudHelper.getProgramasFidelidade}"
+                var="bean" itemValue="#{bean.value}" itemLabel="#{bean.label}"
                 converter="jakarta.faces.Long" forceSelection="true" dropdown="true" minQueryLength="0"
                 queryDelay="250" scrollHeight="250" label="#{cc.attrs.label}"
                 placeholder="#{msg['interface.selecione.o.programa']}"

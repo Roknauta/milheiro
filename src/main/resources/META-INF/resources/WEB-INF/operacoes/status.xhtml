@@ -1,19 +1,19 @@
 <ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui">
     <p:menuButton id="acoes" icon="pi pi-ellipsis-v" title="#{msg['interface.opcoes']}">
         <p:menuitem value="#{msg['interface.editar']}" icon="pi pi-pencil"
-                    action="#{controladorCrud.editar(item)}" process="@this" update=":conteudoCrud" resetValues="true"/>
+                    action="#{crudController.edit(item.id)}" process="@this" update=":conteudoCrud" resetValues="true"/>
         <p:menuitem value="#{msg['interface.excluir']}" icon="pi pi-trash"
-                    action="#{controladorCrud.excluir(item)}" process="@this" update=":conteudoCrud">
+                    action="#{crudController.delete(item)}" process="@this" update=":conteudoCrud">
             <p:confirm header="#{msg['interface.excluir.registro']}" message="#{msg['operacao.excluir.confirmacao']}"/>
         </p:menuitem>
         <p:menuitem value="#{msg['operacao.status.cancelar']}" icon="pi pi-times"
-                    disabled="#{item.cancelada}" action="#{controladorCrud.cancelar(item)}"
+                    disabled="#{item.cancelada}" action="#{crudController.cancelar(item)}"
                     process="@this" update=":conteudoCrud">
             <p:confirm header="#{msg['operacao.status.cancelar']}" message="#{msg['operacao.cancelar.confirmacao']}"/>
         </p:menuitem>
         <p:menuitem value="#{msg['operacao.status.confirmar']}" icon="pi pi-check"
                     rendered="#{item.tipo == 'ACUMULO'}" disabled="#{item.confirmada}"
-                    action="#{controladorCrud.confirmar(item)}" process="@this" update=":conteudoCrud">
+                    action="#{crudController.confirmar(item)}" process="@this" update=":conteudoCrud">
             <p:confirm header="#{msg['operacao.status.confirmar']}" message="#{msg['operacao.status.confirmacao']}"/>
         </p:menuitem>
     </p:menuButton>

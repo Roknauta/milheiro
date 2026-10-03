@@ -1,7 +1,7 @@
 package com.roknauta.milheiro.helper;
 
 import com.roknauta.milheiro.domain.Consolidado;
-import com.roknauta.milheiro.web.Textos;
+import com.roknauta.milheiro.web.Msg;
 import org.primefaces.shaded.json.JSONObject;
 import java.util.*;
 
@@ -13,7 +13,7 @@ public final class GraficoSaldoHelper {
         Map<String, Object> dados = Map.of(
             "labels", saldos.stream().map(c -> c.getPrograma().getNome()).toList(),
             "datasets", List.of(Map.of(
-                "label", Textos.get("interface.saldo"),
+                "label", Msg.get("interface.saldo"),
                 "data", saldos.stream().map(Consolidado::getSaldo).toList())));
         Map<String, Object> opcoes = Map.of("responsive", true, "locale", "pt-BR");
         String json = new JSONObject(Map.of("type", "pie", "data", dados, "options", opcoes)).toString();

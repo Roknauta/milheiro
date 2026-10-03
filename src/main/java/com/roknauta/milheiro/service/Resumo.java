@@ -5,6 +5,7 @@ import com.roknauta.milheiro.domain.ProgramaFidelidade;
 
 import java.math.BigDecimal;
 
+import com.roknauta.milheiro.web.Msg;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,17 +35,17 @@ public class Resumo {
         return Dinheiro.de(getMilheiro().divide(new BigDecimal("20"), 6, java.math.RoundingMode.HALF_UP));
     }
 
-    void entrada(BigDecimal pontos, BigDecimal custo) {
+    public void entrada(BigDecimal pontos, BigDecimal custo) {
         acumulado = acumulado.add(pontos);
         saldo = saldo.add(pontos);
         gasto = Dinheiro.de(gasto.add(custo));
     }
 
-    void saida(BigDecimal pontos) {
+    public void saida(BigDecimal pontos) {
         saldo = saldo.subtract(pontos);
         if (saldo.signum() < 0)
-            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
-                "interface.saldo.insuficiente.em") + " " + programa.getNome() + com.roknauta.milheiro.web.Textos.get(
+            throw new IllegalArgumentException(Msg.get(
+                "interface.saldo.insuficiente.em") + " " + programa.getNome() + Msg.get(
                 "interface.confira.a.data.e.as.operacoes.posteriores"));
     }
     public void setGasto(BigDecimal valor) {

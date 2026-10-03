@@ -2,37 +2,34 @@
     xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
     xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
     template="/WEB-INF/crud.xhtml">
-    <ui:param name="controladorCrud" value="#{vendaController}"/>
-    <ui:param name="formularioId" value="movimentos"/>
-    <ui:param name="tituloFormulario" value="#{msg['operacao.venda']}"/>
-    <ui:param name="registroEmEdicao" value="#{vendaController.operacao.id != null}"/>
+    <ui:param name="crudController" value="#{vendaController}"/>
+    <ui:param name="formId" value="movimentos"/>
     <ui:define name="titulo">#{msg['operacao.venda']}</ui:define>
+    <ui:define name="searchField">
+        <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{vendaController.searchForm.filtro}"/>
+    </ui:define>
     <ui:define name="editField">
         <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
-            <m:datePicker id="data" value="#{vendaController.operacao.data}" label="#{msg['interface.data.2']}"
+            <m:datePicker id="data" value="#{vendaController.editForm.data}" label="#{msg['interface.data.2']}"
                 pattern="dd/MM/yyyy" required="true"/>
-            <m:programaFidelidadeAutoComplete id="programa" value="#{vendaController.programaOperacao}"
-                label="#{msg['interface.programa']}" required="true" programas="#{vendaController.programasAtivos}">
+            <m:programaFidelidadeAutoComplete id="programa" value="#{vendaController.editForm.programaId}"
+                label="#{msg['interface.programa']}" required="true">
             </m:programaFidelidadeAutoComplete>
-            <m:inputNumber id="quantidade" value="#{vendaController.operacao.quantidade}"
+            <m:inputNumber id="quantidade" value="#{vendaController.editForm.quantidade}"
                 label="#{msg['interface.quantidade.de.pontos']}" required="true" decimalPlaces="0"
                 decimalSeparator="," thousandSeparator="." minValue="1" maxValue="999999999999"/>
-            <m:inputNumber id="valor" value="#{vendaController.operacao.valor}"
+            <m:inputNumber id="valor" value="#{vendaController.editForm.valor}"
                 label="#{msg['interface.valor.liquido.recebido.r']}" required="true" decimalPlaces="2"
                 decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999"/>
         </p:panelGrid>
         <h:outputText value="#{msg['interface.informe.o.valor.liquido.recebido.ja.descontadas.eventuais.taxas']}"/>
-        <m:inputTextarea id="observacoes" value="#{vendaController.operacao.observacoes}"
+        <m:inputTextarea id="observacoes" value="#{vendaController.editForm.observacoes}"
             label="#{msg['interface.observacoes']}" maxlength="500" rows="2" autoResize="true"/>
     </ui:define>
-    <ui:define name="salvar">
-        <p:commandButton id="salvar" value="#{msg['interface.salvar.operacao']}" icon="pi pi-save"
-            action="#{vendaController.salvar}" process="@form" update=":conteudoCrud"/>
-    </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{vendaController.pesquisaRealizada and not vendaController.editando}" header="#{msg['crud.resultados']}">
+        <p:panel rendered="#{vendaController.pesquisaRealizada and not vendaController.editing}" header="#{msg['crud.resultados']}">
             <h:outputText value="#{msg['operacao.status.orientacao']}"/>
-            <p:dataTable id="registros" value="#{vendaController.registrosEncontrados}" var="item"
+            <p:dataTable id="registros" value="#{vendaController.result}" var="item"
                 paginator="true" rows="15" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                 showGridlines="true" reflow="true"
                 emptyMessage="#{msg['interface.nenhuma.operacao.comece.cadastrando.seus.programas.e.saldos.iniciais.como.acum']}">

@@ -19,8 +19,8 @@ public class LayoutController {
         Map.entry("/estorno.xhtml", new Caminho("operacao.menu", "operacao.estorno")),
         Map.entry("/enviar.xhtml", new Caminho("interface.calculadora", "interface.enviar.2")),
         Map.entry("/receber.xhtml", new Caminho("interface.calculadora", "interface.receber.2")),
-        Map.entry("/programa-fidelidade.xhtml", new Caminho("interface.cadastros", "interface.programas.de.fidelidade")),
-        Map.entry("/fatores.xhtml", new Caminho("interface.cadastros", "interface.fatores.de.conversao")),
+        Map.entry("/programa-fidelidade.xhtml", new Caminho("interface.cadastros", "programa.fidelidade")),
+        Map.entry("/fator-conversao.xhtml", new Caminho("interface.cadastros", "fator.conversao")),
         Map.entry("/operacoes.xhtml", new Caminho("operacao.menu", "operacao.acumulo")),
         Map.entry("/incluir-operacao.xhtml", new Caminho("operacao.menu", "operacao.acumulo"))
     );
@@ -33,12 +33,12 @@ public class LayoutController {
 
     public String getGrupoAtual() {
         Caminho caminho = caminhoAtual();
-        return caminho == null || caminho.grupo() == null ? null : Textos.get(caminho.grupo());
+        return caminho == null || caminho.grupo() == null ? null : Msg.get(caminho.grupo());
     }
 
     public String getPaginaAtual() {
         Caminho caminho = caminhoAtual();
-        return caminho == null ? null : Textos.get(caminho.pagina());
+        return caminho == null ? null : Msg.get(caminho.pagina());
     }
 
     public void prepararSessao() {

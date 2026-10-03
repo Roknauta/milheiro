@@ -2,32 +2,31 @@
                 xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
                 xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
                 template="/WEB-INF/crud.xhtml">
-    <ui:param name="controladorCrud" value="#{transferenciaController}"/>
-    <ui:param name="formularioId" value="movimentos"/>
-    <ui:param name="tituloFormulario" value="#{msg['operacao.transferencia']}"/>
-    <ui:param name="registroEmEdicao" value="#{transferenciaController.operacao.id != null}"/>
+    <ui:param name="crudController" value="#{transferenciaController}"/>
+    <ui:param name="formId" value="movimentos"/>
     <ui:define name="titulo">#{msg['operacao.transferencia']}</ui:define>
+    <ui:define name="searchField">
+        <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{transferenciaController.searchForm.filtro}"/>
+    </ui:define>
     <ui:define name="editField">
-        <ui:fragment rendered="#{transferenciaController.operacao.id == null}">
+        <ui:fragment rendered="#{transferenciaController.editForm.id == null}">
             <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
-                <m:datePicker id="data" value="#{transferenciaController.operacao.data}" pattern="dd/MM/yyyy" required="true" label="#{msg['interface.data.2']}">
+                <m:datePicker id="data" value="#{transferenciaController.editForm.data}" pattern="dd/MM/yyyy" required="true" label="#{msg['interface.data.2']}">
                     <p:ajax event="dateSelect" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
                     <p:ajax event="change" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
                 </m:datePicker>
-                <m:inputNumber id="quantidade" value="#{transferenciaController.operacao.quantidade}" required="true" label="#{msg['interface.quantidade.de.pontos']}" decimalPlaces="0"
+                <m:inputNumber id="quantidade" value="#{transferenciaController.editForm.quantidade}" required="true" label="#{msg['interface.quantidade.de.pontos']}" decimalPlaces="0"
                                decimalSeparator="," thousandSeparator="." minValue="1" maxValue="999999999999">
                     <p:ajax event="keyup" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia" delay="350"/>
                     <p:ajax event="change" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
                 </m:inputNumber>
-                <m:programaFidelidadeAutoComplete id="programa" value="#{transferenciaController.programaOperacao}" required="true" label="#{msg['interface.programa']}"
-                                                  programas="#{transferenciaController.programasAtivos}">
+                <m:programaFidelidadeAutoComplete id="programa" value="#{transferenciaController.editForm.programaId}" required="true" label="#{msg['interface.programa']}">
                     <p:ajax event="itemSelect" listener="#{transferenciaController.aplicarFator}" process="@this"
                             update=":movimentos:conversao :movimentos:bonus :movimentos:resumoTransferencia" resetValues="true"/>
                     <p:ajax event="clear" listener="#{transferenciaController.aplicarFator}" process="@this" update=":movimentos:conversao :movimentos:bonus :movimentos:resumoTransferencia"
                             resetValues="true"/>
                 </m:programaFidelidadeAutoComplete>
-                <m:programaFidelidadeAutoComplete id="destino" value="#{transferenciaController.destinoOperacao}" required="true" label="#{msg['interface.programa.de.destino']}"
-                                                  programas="#{transferenciaController.programasAtivos}">
+                <m:programaFidelidadeAutoComplete id="destino" value="#{transferenciaController.editForm.destinoId}" required="true" label="#{msg['interface.programa.de.destino']}">
                     <p:ajax event="itemSelect" listener="#{transferenciaController.aplicarFator}" process="@this"
                             update=":movimentos:conversao :movimentos:bonus :movimentos:resumoTransferencia" resetValues="true"/>
                     <p:ajax event="clear" listener="#{transferenciaController.aplicarFator}" process="@this"
@@ -35,12 +34,12 @@
                 </m:programaFidelidadeAutoComplete>
             </p:panelGrid>
             <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
-                <m:inputNumber id="bonus" value="#{transferenciaController.operacao.bonus}" required="true" label="#{msg['interface.bonus']}" decimalPlaces="0" decimalSeparator=","
+                <m:inputNumber id="bonus" value="#{transferenciaController.editForm.bonus}" required="true" label="#{msg['interface.bonus']}" decimalPlaces="0" decimalSeparator=","
                                thousandSeparator="." minValue="0" maxValue="999999999999">
                     <p:ajax event="keyup" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia" delay="350"/>
                     <p:ajax event="change" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
                 </m:inputNumber>
-                <m:inputNumber id="taxas" value="#{transferenciaController.operacao.taxas}" required="false" emptyValue="zero" label="#{msg['interface.taxas.pagas.r']}"
+                <m:inputNumber id="taxas" value="#{transferenciaController.editForm.taxas}" required="false" emptyValue="zero" label="#{msg['interface.taxas.pagas.r']}"
                                decimalPlaces="2" decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999">
                     <p:ajax event="keyup" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia" delay="350"/>
                     <p:ajax event="change" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
@@ -48,41 +47,41 @@
             </p:panelGrid>
             <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
                 <m:inputTextarea
-                id="observacoes" value="#{transferenciaController.operacao.observacoes}" maxlength="500" rows="2" autoResize="true" label="#{msg['interface.observacoes']}"/>
+                id="observacoes" value="#{transferenciaController.editForm.observacoes}" maxlength="500" rows="2" autoResize="true" label="#{msg['interface.observacoes']}"/>
             </p:panelGrid>
             <h:panelGroup id="conversao" layout="block">
                 <h:panelGroup layout="block">
-                    <ui:fragment rendered="#{transferenciaController.fatorCadastrado != null}">
-                        <h:panelGroup layout="block"> #{msg['interface.proporcao.cadastrada']} <h:outputText value="#{transferenciaController.fatorCadastrado.pontosOrigem}">
+                    <ui:fragment rendered="#{transferenciaController.editForm.fatorCadastrado != null}">
+                        <h:panelGroup layout="block"> #{msg['interface.proporcao.cadastrada']} <h:outputText value="#{transferenciaController.editForm.fatorCadastrado.pontosOrigem}">
                             <f:converter converterId="decimalConverter"/>
                             <f:attribute name="casasDecimais" value="2"/>
                         </h:outputText> #{msg['interface.ponto.s.na.origem.para']}
-                            <h:outputText value="#{transferenciaController.fatorCadastrado.pontosDestino}">
+                            <h:outputText value="#{transferenciaController.editForm.fatorCadastrado.pontosDestino}">
                                 <f:converter converterId="decimalConverter"/>
                                 <f:attribute name="casasDecimais" value="2"/>
                             </h:outputText> #{msg['interface.ponto.s.no.destino']}
                         </h:panelGroup>
                     </ui:fragment>
-                    <ui:fragment rendered="#{transferenciaController.fatorCadastrado == null}">
+                    <ui:fragment rendered="#{transferenciaController.editForm.fatorCadastrado == null}">
                         <h:panelGroup layout="block"> #{msg['interface.nao.ha.fator.cadastrado.para.este.par.informe.a.proporcao.desta.operacao']} </h:panelGroup>
                     </ui:fragment>
-                    <m:toggleSwitch id="conversaoExcepcional" value="#{transferenciaController.conversaoExcepcional}"
-                                    label="#{msg['interface.usar.conversao.excepcional.nesta.operacao']}" disabled="#{transferenciaController.fatorCadastrado == null}">
+                    <m:toggleSwitch id="conversaoExcepcional" value="#{transferenciaController.editForm.conversaoExcepcional}"
+                                    label="#{msg['interface.usar.conversao.excepcional.nesta.operacao']}" disabled="#{transferenciaController.editForm.fatorCadastrado == null}">
                         <p:ajax listener="#{transferenciaController.alternarConversaoExcepcional}" process="@this" update=":movimentos:conversao :movimentos:resumoTransferencia"
                                 resetValues="true"/>
                     </m:toggleSwitch>
                     <h:panelGroup layout="inline"> #{msg['interface.alterar.estes.valores.nao.modifica.o.cadastro.nem.outras.operacoes.ao.desmarca']} </h:panelGroup>
                 </h:panelGroup>
                 <p:panelGrid columns="2" layout="grid" styleClass="form-grid"
-                             rendered="#{transferenciaController.conversaoExcepcional}">
-                    <m:inputNumber id="fator" value="#{transferenciaController.operacao.pontosOrigem}" required="true"
+                             rendered="#{transferenciaController.editForm.conversaoExcepcional}">
+                    <m:inputNumber id="fator" value="#{transferenciaController.editForm.pontosOrigem}" required="true"
                                    label="#{msg['interface.proporcao.pontos.na.origem']}" decimalPlaces="2" decimalSeparator="," thousandSeparator="." minValue="0.01"
                                    maxValue="999999999999">
                         <p:ajax event="keyup" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"
                                 delay="350"/>
                         <p:ajax event="change" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
                     </m:inputNumber>
-                    <m:inputNumber id="pontosDestino" value="#{transferenciaController.operacao.pontosDestino}" required="true"
+                    <m:inputNumber id="pontosDestino" value="#{transferenciaController.editForm.pontosDestino}" required="true"
                                    minValue="0.01" decimalPlaces="2" decimalSeparator="," thousandSeparator="."
                                    label="#{msg['interface.proporcao.pontos.no.destino']}">
                         <p:ajax event="keyup" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"
@@ -92,19 +91,19 @@
                 </p:panelGrid>
             </h:panelGroup>
             <h:panelGroup id="detalhes" layout="block">
-                <m:toggleSwitch id="comCarrinho" value="#{transferenciaController.operacao.comCarrinho}" label="#{msg['interface.transferencia.com.carrinho']}">
+                <m:toggleSwitch id="comCarrinho" value="#{transferenciaController.editForm.comCarrinho}" label="#{msg['interface.transferencia.com.carrinho']}">
                     <p:ajax listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:areaCarrinho :movimentos:resumoTransferencia"
                             resetValues="true"/>
                 </m:toggleSwitch>
                 <h:panelGroup id="areaCarrinho" layout="block">
-                    <ui:fragment rendered="#{transferenciaController.operacao.comCarrinho}">
+                    <ui:fragment rendered="#{transferenciaController.editForm.comCarrinho}">
                         <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
-                            <m:inputNumber id="pontosDebitarSaldo" value="#{transferenciaController.operacao.pontosDebitarSaldo}" required="true"
+                            <m:inputNumber id="pontosDebitarSaldo" value="#{transferenciaController.editForm.pontosDebitarSaldo}" required="true"
                                            label="#{msg['interface.pontos.debitados.do.saldo.da.origem']}" decimalPlaces="0" minValue="0" maxValue="999999999999" decimalSeparator=","
                                            thousandSeparator=".">
                                 <p:ajax event="change" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
                             </m:inputNumber>
-                            <m:inputNumber id="valorCarrinho" value="#{transferenciaController.operacao.valorCarrinho}" required="true" label="#{msg['interface.valor.carrinho.r']}"
+                            <m:inputNumber id="valorCarrinho" value="#{transferenciaController.editForm.valorCarrinho}" required="true" label="#{msg['interface.valor.carrinho.r']}"
                                            decimalPlaces="2" minValue="0" maxValue="999999999999" decimalSeparator="," thousandSeparator=".">
                                 <p:ajax event="change" listener="#{transferenciaController.atualizarResumoTransferencia}" process="@this" update=":movimentos:resumoTransferencia"/>
                             </m:inputNumber>
@@ -119,33 +118,33 @@
             <h:panelGroup
                     id="resumoTransferencia" layout="block">
                 <p:panel header="#{msg['interface.resumo.da.transferencia']}" styleClass="resumo-transferencia">
-                    <h:outputText rendered="#{transferenciaController.resumoPontos == null}" value="#{msg['transferencia.preencher']}"/>
+                    <h:outputText rendered="#{transferenciaController.editForm.resumoPontos == null}" value="#{msg['transferencia.preencher']}"/>
                     <m:labelValor label="#{msg['interface.pontos.debitados.do.saldo.da.origem']}"
-                                  value="#{transferenciaController.pontosDebitados}" converter="quantidadeConverter" rendered="#{transferenciaController.resumoPontos != null}"/>
+                                  value="#{transferenciaController.editForm.pontosDebitados}" converter="quantidadeConverter" rendered="#{transferenciaController.editForm.resumoPontos != null}"/>
                     <m:labelValor label="#{msg['interface.total.a.creditar.no.destino']}"
-                                  value="#{transferenciaController.resumoPontos}" converter="quantidadeConverter" rendered="#{transferenciaController.resumoPontos != null}"/>
+                                  value="#{transferenciaController.editForm.resumoPontos}" converter="quantidadeConverter" rendered="#{transferenciaController.editForm.resumoPontos != null}"/>
                     <m:labelValor label="#{msg['interface.gasto.percentual.da.transferencia']}"
-                                  value="#{transferenciaController.resumoCusto}" converter="monetarioConverter" rendered="#{transferenciaController.resumoPontos != null}"/>
+                                  value="#{transferenciaController.editForm.resumoCusto}" converter="monetarioConverter" rendered="#{transferenciaController.editForm.resumoPontos != null}"/>
                     <m:labelValor label="#{msg['interface.taxas.pagas.r']}"
-                                  value="#{transferenciaController.operacao.taxas}" converter="monetarioConverter" rendered="#{transferenciaController.resumoPontos != null}"/>
+                                  value="#{transferenciaController.editForm.taxas}" converter="monetarioConverter" rendered="#{transferenciaController.editForm.resumoPontos != null}"/>
                     <m:labelValor label="#{msg['interface.valor.percentual.associado.ao.destino']}"
-                                  value="#{transferenciaController.resumoTotal}" converter="monetarioConverter" rendered="#{transferenciaController.resumoPontos != null}"/>
-                    <ui:fragment rendered="#{transferenciaController.operacao.comCarrinho and transferenciaController.resumoPontos != null}">
+                                  value="#{transferenciaController.editForm.resumoTotal}" converter="monetarioConverter" rendered="#{transferenciaController.editForm.resumoPontos != null}"/>
+                    <ui:fragment rendered="#{transferenciaController.editForm.comCarrinho and transferenciaController.editForm.resumoPontos != null}">
                         <m:labelValor label="#{msg['interface.pontos.comprados.no.carrinho']}"
-                                      value="#{transferenciaController.pontosComprados}" converter="quantidadeConverter" rendered="#{transferenciaController.pontosComprados != null}"/>
+                                      value="#{transferenciaController.editForm.pontosComprados}" converter="quantidadeConverter" rendered="#{transferenciaController.editForm.pontosComprados != null}"/>
                         <m:labelValor label="#{msg['interface.pontos.do.carrinho.no.destino.com.bonus']}"
-                                      value="#{transferenciaController.resumoPontosCarrinho}" converter="quantidadeConverter"
-                                      rendered="#{transferenciaController.resumoPontosCarrinho != null}"/>
+                                      value="#{transferenciaController.editForm.resumoPontosCarrinho}" converter="quantidadeConverter"
+                                      rendered="#{transferenciaController.editForm.resumoPontosCarrinho != null}"/>
                         <m:labelValor label="#{msg['interface.valor.do.carrinho']}"
-                                      value="#{transferenciaController.custoCarrinho}" converter="monetarioConverter" rendered="#{transferenciaController.custoCarrinho != null}"/>
+                                      value="#{transferenciaController.editForm.custoCarrinho}" converter="monetarioConverter" rendered="#{transferenciaController.editForm.custoCarrinho != null}"/>
                         <m:labelValor label="#{msg['interface.milheiro.do.carrinho.com.bonus']}"
-                                      value="#{transferenciaController.resumoMilheiroCarrinho}" converter="monetarioConverter"
-                                      rendered="#{transferenciaController.resumoMilheiroCarrinho != null}"/>
+                                      value="#{transferenciaController.editForm.resumoMilheiroCarrinho}" converter="monetarioConverter"
+                                      rendered="#{transferenciaController.editForm.resumoMilheiroCarrinho != null}"/>
                     </ui:fragment>
-                    <h:panelGroup layout="block" rendered="#{transferenciaController.resumoEuros != null}">
-                        <m:labelValor label="#{msg['transferencia.euros']}" value="#{transferenciaController.resumoEuros}" converter="euroConverter"/>
+                    <h:panelGroup layout="block" rendered="#{transferenciaController.editForm.resumoEuros != null}">
+                        <m:labelValor label="#{msg['transferencia.euros']}" value="#{transferenciaController.editForm.resumoEuros}" converter="euroConverter"/>
                         <m:labelValor label="#{msg['transferencia.custo.euro']}"
-                                      value="#{transferenciaController.custoPorEuro}" converter="monetarioConverter" rendered="#{transferenciaController.custoPorEuro != null}"/>
+                                      value="#{transferenciaController.editForm.custoPorEuro}" converter="monetarioConverter" rendered="#{transferenciaController.editForm.custoPorEuro != null}"/>
                         <h:panelGroup layout="block" styleClass="resumo-nota">
                             <h:outputText value="#{msg['transferencia.euros.regra']}"/>
                         </h:panelGroup>
@@ -153,20 +152,16 @@
                             <h:outputText value="#{msg['transferencia.custo.euro.regra']}"/>
                         </h:panelGroup>
                     </h:panelGroup>
-                    <h:outputText rendered="#{transferenciaController.resumoAviso != null}" value="#{transferenciaController.resumoAviso}"/>
+                    <h:outputText rendered="#{transferenciaController.editForm.resumoAviso != null}" value="#{transferenciaController.editForm.resumoAviso}"/>
                 </p:panel>
             </h:panelGroup>
         </ui:fragment>
         <ui:include src="/WEB-INF/operacoes/editar-transferencia.xhtml"/>
     </ui:define>
-    <ui:define name="salvar">
-        <p:commandButton id="salvar" value="#{msg['interface.salvar.operacao']}" icon="pi pi-save"
-                         action="#{transferenciaController.salvar}" process="@form" update=":conteudoCrud"/>
-    </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{transferenciaController.pesquisaRealizada and not transferenciaController.editando}" header="#{msg['crud.resultados']}">
+        <p:panel rendered="#{transferenciaController.pesquisaRealizada and not transferenciaController.editing}" header="#{msg['crud.resultados']}">
             <h:outputText value="#{msg['operacao.status.orientacao']}"/>
-            <p:dataTable id="registros" value="#{transferenciaController.registrosEncontrados}" var="item"
+            <p:dataTable id="registros" value="#{transferenciaController.result}" var="item"
                          paginator="true" rows="15" paginatorPosition="bottom" paginatorAlwaysVisible="false"
                          showGridlines="true" reflow="true"
                          emptyMessage="#{msg['interface.nenhuma.operacao.comece.cadastrando.seus.programas.e.saldos.iniciais.como.acum']}">

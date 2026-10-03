@@ -1,28 +1,28 @@
 package com.roknauta.milheiro.web;
 
-import com.roknauta.milheiro.domain.Acumulo;
-import com.roknauta.milheiro.domain.TipoOperacao;
-import com.roknauta.milheiro.service.OperacaoService;
-import org.springframework.context.annotation.Scope;
+import com.roknauta.milheiro.dto.crud.AcumuloDTO;
+import com.roknauta.milheiro.service.crud.AcumuloService;
+import com.roknauta.milheiro.web.crud.CrudControllerBase;
+import jakarta.faces.view.ViewScoped;
 import org.springframework.stereotype.Component;
 
-@Component("acumuloController")
-@Scope("view")
-public class AcumuloController extends OperacaoController<Acumulo> {
-    public AcumuloController(OperacaoService service) {
-        super(service, TipoOperacao.ACUMULO, Acumulo.class);
-    }
+@Component
+@ViewScoped
+public class AcumuloController extends CrudControllerBase<AcumuloDTO, AcumuloService> {
+    public AcumuloController(AcumuloService service) { super(service); }
 
     @Override
-    protected boolean corresponde(Acumulo item) {
-        return super.corresponde(item) || contem(item.getParcelaDescricao())
-            || (item.getVinculoTransferencia() != null && contem(item.getVinculoTransferencia().toString()));
+    public String pageTitle() { return Msg.get("operacao.acumulo"); }
+
+    public void confirmar(AcumuloDTO dto) {
+        service.confirmar(dto);
+        atualizarResultados();
+        addInfoMessage("interface.dados.salvos");
     }
-    @Override
-    protected Acumulo salvarOperacao() {
-        return service.salvarAcumulo(operacao, programaOperacao);
-    }
-    public void confirmar(Acumulo item) {
-        executar(() -> service.confirmarAcumulo(item.getId(), item.getVersao()));
+
+    public void cancelar(AcumuloDTO dto) {
+        service.cancelar(dto);
+        atualizarResultados();
+        addInfoMessage("interface.dados.salvos");
     }
 }

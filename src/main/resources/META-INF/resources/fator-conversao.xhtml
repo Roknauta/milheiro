@@ -1,20 +1,21 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
                 xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
                 template="/WEB-INF/crud.xhtml">
-    <ui:param name="pagina" value="#{msg['interface.fatores']}"/>
-    <ui:param name="tituloFormulario" value="#{msg['interface.fatores.de.conversao']}"/>
-    <ui:param name="registroEmEdicao" value="#{carteira.fator.id != null}"/>
+    <ui:param name="crudController" value="#{fatorConversaoController}"/>
     <ui:define name="titulo"> #{msg['interface.fatores.de.conversao']} </ui:define>
-    <ui:param name="formularioId" value="cadastro"/>
+    <ui:param name="formId" value="fatorConversaoEditForm"/>
+    <ui:define name="searchField">
+        <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{fatorConversaoController.searchForm.filtro}"/>
+    </ui:define>
     <ui:define name="editField">
         <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
-            <m:programaFidelidadeAutoComplete id="origem" value="#{carteira.origemFator}" required="true" label="#{msg['interface.programa.de.origem']}" programas="#{carteira.programasAtivos}">
+            <m:programaFidelidadeAutoComplete id="origem" value="#{fatorConversaoController.editForm.origemId}" required="true" label="#{msg['interface.programa.de.origem']}">
             </m:programaFidelidadeAutoComplete>
-            <m:programaFidelidadeAutoComplete id="destino" value="#{carteira.destinoFator}" required="true" label="#{msg['interface.programa.de.destino']}" programas="#{carteira.programasAtivos}">
+            <m:programaFidelidadeAutoComplete id="destino" value="#{fatorConversaoController.editForm.destinoId}" required="true" label="#{msg['interface.programa.de.destino']}">
             </m:programaFidelidadeAutoComplete>
-            <m:inputNumber id="pontosOrigem" value="#{carteira.fator.pontosOrigem}" required="true" label="#{msg['interface.pontos.na.origem']}" decimalPlaces="3" decimalSeparator=","
+            <m:inputNumber id="pontosOrigem" value="#{fatorConversaoController.editForm.pontosOrigem}" required="true" label="#{msg['interface.pontos.na.origem']}" decimalPlaces="3" decimalSeparator=","
                            thousandSeparator="." minValue="0.001" maxValue="999999999999"/>
-            <m:inputNumber id="pontosDestino" value="#{carteira.fator.pontosDestino}" required="true" label="#{msg['interface.pontos.no.destino']}" decimalPlaces="3" decimalSeparator=","
+            <m:inputNumber id="pontosDestino" value="#{fatorConversaoController.editForm.pontosDestino}" required="true" label="#{msg['interface.pontos.no.destino']}" decimalPlaces="3" decimalSeparator=","
                            thousandSeparator="." minValue="0.001" maxValue="999999999999"/>
         </p:panelGrid>
         <h:panelGroup
@@ -22,12 +23,12 @@
         </h:panelGroup>
     </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{not carteira.editando and carteira.pesquisaRealizada}" header="#{msg['crud.resultados']}">
+        <p:panel rendered="#{not fatorConversaoController.editing and fatorConversaoController.pesquisaRealizada}" header="#{msg['crud.resultados']}">
             <h:outputText value="#{msg['interface.conversoes.cadastradas']}"/>
-            <p:dataTable id="registros" rendered="#{carteira.pesquisaRealizada}" showGridlines="true" value="#{carteira.fatoresEncontrados}"
+            <p:dataTable id="registros" rendered="#{fatorConversaoController.pesquisaRealizada}" showGridlines="true" value="#{fatorConversaoController.result}"
                          emptyMessage="#{msg['interface.nenhum.fator.cadastrado']}" reflow="true" var="item" paginatorPosition="bottom">
                 <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
-                    <m:rowActions id="acoes" edit="#{carteira.editarFator(item)}" remove="#{carteira.excluirFator(item)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
+                    <m:rowActions id="acoes" edit="#{fatorConversaoController.edit(item.id)}" remove="#{fatorConversaoController.delete(item.id)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
                                   confirmHeader="#{msg['interface.excluir.registro']}" confirmMessage="#{msg['interface.confirma.esta.acao']}"/>
                 </p:column>
                 <t:column headerText="#{msg['interface.origem']}" value="#{item.origem.nome}"/>
@@ -36,8 +37,5 @@
                 <t:column headerText="#{msg['interface.pontos.destino']}" value="#{item.pontosDestino}" converter="decimalConverter"/>
             </p:dataTable>
         </p:panel>
-    </ui:define>
-    <ui:define name="salvar">
-        <p:commandButton value="#{msg['interface.salvar.fator']}" icon="pi pi-save" action="#{carteira.salvarFator}" update=":conteudoCrud" process="@form" id="salvar"/>
     </ui:define>
 </ui:composition>

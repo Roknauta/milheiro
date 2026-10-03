@@ -2,6 +2,7 @@ package com.roknauta.milheiro.service;
 
 import com.roknauta.milheiro.domain.*;
 import com.roknauta.milheiro.repository.*;
+import com.roknauta.milheiro.web.Msg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,30 @@ import java.util.*;
 public class PlanilhaService {
 
     public static final int LIMITE_BYTES = 5 * 1024 * 1024;
-    private static final String[] CABECALHO = {com.roknauta.milheiro.web.Textos.get("planilha.coluna.data"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.tipo"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.quantidade"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.destino"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.valor"), com.roknauta.milheiro.web.Textos.get("planilha.coluna.observacoes")};
+    private static final String[] CABECALHO = {Msg.get("planilha.coluna.data"), Msg.get("planilha.coluna.tipo"), Msg.get("planilha.coluna.quantidade"), Msg.get("planilha.coluna.destino"), Msg.get("planilha.coluna.valor"), Msg.get("planilha.coluna.observacoes")};
     private final OperacaoService carteira;
+    private final com.roknauta.milheiro.service.mapper.ProgramaFidelidadeMapper programaMapper;
+    private final com.roknauta.milheiro.service.crud.AcumuloService acumuloService;
+    private final com.roknauta.milheiro.service.crud.VendaService vendaService;
+    private final com.roknauta.milheiro.service.crud.ResgateService resgateService;
+    private final com.roknauta.milheiro.service.crud.TransferenciaService transferenciaService;
     private final ProgramaFidelidadeRepository programas;
+    private final com.roknauta.milheiro.service.crud.ProgramaFidelidadeService programaService;
 
-    public PlanilhaService(OperacaoService carteira, ProgramaFidelidadeRepository programas) {
+    public PlanilhaService(OperacaoService carteira, ProgramaFidelidadeRepository programas, com.roknauta.milheiro.service.crud.ProgramaFidelidadeService programaService,
+                           com.roknauta.milheiro.service.crud.AcumuloService acumuloService,
+                           com.roknauta.milheiro.service.crud.VendaService vendaService,
+                           com.roknauta.milheiro.service.crud.ResgateService resgateService,
+                           com.roknauta.milheiro.service.crud.TransferenciaService transferenciaService,
+                           com.roknauta.milheiro.service.mapper.ProgramaFidelidadeMapper programaMapper) {
         this.carteira = carteira;
+        this.programaMapper = programaMapper;
         this.programas = programas;
+        this.programaService = programaService;
+        this.acumuloService = acumuloService;
+        this.vendaService = vendaService;
+        this.resgateService = resgateService;
+        this.transferenciaService = transferenciaService;
     }
 
     public record Linha(int numero, LocalDate data, TipoOperacao tipo, BigDecimal quantidade, String programa,
@@ -56,22 +74,22 @@ public class PlanilhaService {
     }
 
     private static IllegalArgumentException erro(int linha, String texto) {
-        return new IllegalArgumentException(com.roknauta.milheiro.web.Textos.formatar("planilha.erro.linha", linha, texto));
+        return new IllegalArgumentException(Msg.formatar("planilha.erro.linha", linha, texto));
     }
 
     public List<Linha> ler(byte[] bytes) {
         if (bytes == null || bytes.length == 0 || bytes.length > LIMITE_BYTES)
             throw new IllegalArgumentException(
-                com.roknauta.milheiro.web.Textos.get("mensagem.selecione.um.arquivo.xlsx.de.ate.5.mb"));
+                Msg.get("mensagem.selecione.um.arquivo.xlsx.de.ate.5.mb"));
         try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(bytes))) {
             if (wb.getNumberOfSheets() == 0)
                 throw new IllegalArgumentException(
-                    com.roknauta.milheiro.web.Textos.get("mensagem.a.planilha.nao.possui.abas"));
+                    Msg.get("mensagem.a.planilha.nao.possui.abas"));
             Sheet sheet = wb.getSheetAt(0);
             Row header = sheet.getRow(0);
             for (int c = 0; c < 6; c++)
                 if (header == null || !normal(texto(header.getCell(c))).equals(normal(CABECALHO[c])))
-                    throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                    throw new IllegalArgumentException(Msg.get(
                         "mensagem.a.primeira.linha.deve.conter.data.tipo.quantidade.destino.valor.observacoes.a.a."));
             List<Linha> linhas = new ArrayList<>();
             for (Row row : sheet) {
@@ -86,7 +104,7 @@ public class PlanilhaService {
                     continue;
                 if (linhas.size() >= 10000)
                     throw new IllegalArgumentException(
-                        com.roknauta.milheiro.web.Textos.get("mensagem.limite.de.10.000.operacoes.na.primeira.aba"));
+                        Msg.get("mensagem.limite.de.10.000.operacoes.na.primeira.aba"));
                 int n = i + 1;
                 try {
                     Cell date = row.getCell(0);
@@ -94,7 +112,7 @@ public class PlanilhaService {
                     if (tipo(date) == CellType.NUMERIC) {
                         double serial = date.getNumericCellValue();
                         if (!DateUtil.isValidExcelDate(serial))
-                            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get("planilha.data.invalida"));
+                            throw new IllegalArgumentException(Msg.get("planilha.data.invalida"));
                         data = DateUtil.getLocalDateTime(serial, wb.isDate1904()).toLocalDate();
                     } else
                         data = LocalDate.parse(texto(date),
@@ -104,42 +122,42 @@ public class PlanilhaService {
                         case "venda" -> TipoOperacao.VENDA;
                         case "resgate" -> TipoOperacao.RESGATE;
                         case "transferencia" -> TipoOperacao.TRANSFERENCIA;
-                        default -> throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                        default -> throw new IllegalArgumentException(Msg.get(
                             "mensagem.tipo.invalido.use.acumulo.venda.resgate.ou.transferencia"));
                     };
                     BigDecimal q = numero(row.getCell(2), false), v = numero(row.getCell(4), true);
                     if (q.signum() == 0 || q.stripTrailingZeros().scale() > 2 || q.abs()
                         .compareTo(new BigDecimal("999999999999")) > 0)
-                        throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                        throw new IllegalArgumentException(Msg.get(
                             "mensagem.quantidade.invalida.use.ate.duas.casas.decimais.diferente.de.zero"));
                     if (t == TipoOperacao.ACUMULO && q.signum() < 0)
-                        throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                        throw new IllegalArgumentException(Msg.get(
                             "mensagem.acumulo.nao.pode.ter.quantidade.negativa.informe.o.tipo.de.saida.correto"));
                     if (v.signum() < 0 || v.stripTrailingZeros().scale() > 2 || v.compareTo(
                         new BigDecimal("999999999999")) > 0)
-                        throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                        throw new IllegalArgumentException(Msg.get(
                             "mensagem.valor.invalido.informe.valor.nao.negativo.com.ate.duas.casas.decimais"));
                     String p = texto(row.getCell(3)), obs = texto(row.getCell(5));
                     if (p.isBlank() || p.length() > 80)
-                        throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                        throw new IllegalArgumentException(Msg.get(
                             "mensagem.informe.o.programa.na.coluna.d.com.ate.80.caracteres"));
                     if (obs.length() > 500)
                         throw new IllegalArgumentException(
-                            com.roknauta.milheiro.web.Textos.get("mensagem.observacoes.maximo.de.500.caracteres"));
+                            Msg.get("mensagem.observacoes.maximo.de.500.caracteres"));
                     linhas.add(new Linha(n, data, t, q.abs(), p, v, obs));
                 } catch (RuntimeException e) {
-                    throw erro(n, e instanceof DateTimeException ? com.roknauta.milheiro.web.Textos.get(
+                    throw erro(n, e instanceof DateTimeException ? Msg.get(
                         "mensagem.data.invalida.use.dd.mm.aaaa") : e.getMessage());
                 }
             }
             if (linhas.isEmpty())
                 throw new IllegalArgumentException(
-                    com.roknauta.milheiro.web.Textos.get("mensagem.nao.ha.operacoes.nas.colunas.a.a.f.da.primeira.aba"));
+                    Msg.get("mensagem.nao.ha.operacoes.nas.colunas.a.a.f.da.primeira.aba"));
             return linhas;
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+            throw new IllegalArgumentException(Msg.get(
                 "mensagem.nao.foi.possivel.ler.o.arquivo.use.uma.planilha.xlsx.valida.sem.senha"), e);
         }
     }
@@ -156,7 +174,7 @@ public class PlanilhaService {
             case STRING -> c.getStringCellValue().trim();
             case NUMERIC -> BigDecimal.valueOf(c.getNumericCellValue()).stripTrailingZeros().toPlainString();
             default -> throw new IllegalArgumentException(
-                com.roknauta.milheiro.web.Textos.get("mensagem.celula.invalida.ou.formula.com.erro"));
+                Msg.get("mensagem.celula.invalida.ou.formula.com.erro"));
         };
     }
 
@@ -172,7 +190,7 @@ public class PlanilhaService {
         try {
             return new BigDecimal(s);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+            throw new IllegalArgumentException(Msg.get(
                 "mensagem.numero.invalido.use.celulas.numericas.ou.formato.brasileiro.1.234.56"));
         }
     }
@@ -184,7 +202,7 @@ public class PlanilhaService {
             if (l.tipo() == TipoOperacao.TRANSFERENCIA) {
                 String obs = normal(l.observacoes());
                 if (!obs.startsWith("para "))
-                    throw erro(l.numero(), com.roknauta.milheiro.web.Textos.get(
+                    throw erro(l.numero(), Msg.get(
                         "mensagem.na.transferencia.informe.para.nome.do.programa.nas.observacoes.e.uma.linha.de.ac"));
                 String destino = nome(obs.substring(5));
                 List<Linha> candidatos = linhas.stream().filter(
@@ -192,12 +210,12 @@ public class PlanilhaService {
                         destino) && normal(c.observacoes()).matches(
                         "(?:da|do|de) " + java.util.regex.Pattern.quote(nome(l.programa())) + "(?: com .*)?")).toList();
                 if (candidatos.size() != 1 || !creditos.add(candidatos.get(0).numero()))
-                    throw erro(l.numero(), com.roknauta.milheiro.web.Textos.get(
+                    throw erro(l.numero(), Msg.get(
                         "mensagem.nao.foi.possivel.identificar.um.unico.credito.da.transferencia.use.um.acumulo.no") + " " + l.programa() + "'.");
                 Linha c = candidatos.get(0);
                 if (nome(l.programa()).equals(nome(c.programa())))
                     throw erro(l.numero(),
-                        com.roknauta.milheiro.web.Textos.get("mensagem.origem.e.destino.devem.ser.diferentes"));
+                        Msg.get("mensagem.origem.e.destino.devem.ser.diferentes"));
                 pares.put(l.numero(), c);
             }
         List<Movimento> result = new ArrayList<>();
@@ -217,9 +235,9 @@ public class PlanilhaService {
         List<Movimento> movimentos = movimentos(ler(bytes));
         programas.bloquearTodos();
         Map<String, ProgramaFidelidade> cadastro = new HashMap<>();
-        for (ProgramaFidelidade p : carteira.programas()) {
+        for (ProgramaFidelidade p : programaService.listar()) {
             if (cadastro.put(nome(p.getNome()), p) != null)
-                throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+                throw new IllegalArgumentException(Msg.get(
                     "mensagem.ha.programas.equivalentes.no.cadastro.unifique.os.nomes.antes.de.importar"));
         }
         carteira.limparHistoricoParaImportacao();
@@ -230,14 +248,14 @@ public class PlanilhaService {
                 m.credito() == null ? List.of(l.programa()) : List.of(l.programa(), m.credito().programa());
             for (String n : nomes)
                 if (!cadastro.containsKey(nome(n))) {
-                    ProgramaFidelidade p = ProgramaFidelidade.builder()
-                        .categoria(CategoriaProgramaFidelidade.PONTOS)
-                        .nome(n)
-                        .build();
-                    cadastro.put(nome(n), carteira.salvarProgramaFidelidade(p));
+                    var dto = new com.roknauta.milheiro.dto.crud.ProgramaFidelidadeDTO();
+                    dto.setCategoria(CategoriaProgramaFidelidade.PONTOS);
+                    dto.setNome(n);
+                    ProgramaFidelidade p = programaMapper.toEntity(dto);
+                    cadastro.put(nome(n), programaService.salvar(p));
                     criados++;
                 }
-            com.roknauta.milheiro.dto.OperacaoFormulario o = new com.roknauta.milheiro.dto.OperacaoFormulario();
+            com.roknauta.milheiro.dto.crud.OperacaoDTO o = novoDTO(l.tipo());
             o.setTipo(l.tipo());
             o.setData(l.data());
             o.setQuantidade(l.quantidade());
@@ -248,21 +266,22 @@ public class PlanilhaService {
             else if (m.credito() != null) {
                 destino = cadastro.get(nome(m.credito().programa())).getId();
                 // A razão efetiva preserva exatamente o crédito registrado, incluindo bônus.
-                o.setPontosOrigem(l.quantidade());
-                o.setPontosDestino(m.credito().quantidade());
-                o.setBonus(BigDecimal.ZERO);
+                var transferencia = (com.roknauta.milheiro.dto.crud.TransferenciaDTO) o;
+                transferencia.setPontosOrigem(l.quantidade());
+                transferencia.setPontosDestino(m.credito().quantidade());
+                transferencia.setBonus(BigDecimal.ZERO);
                 o.setTaxas(Dinheiro.de(l.valor()));
                 transferencias++;
                 String obs = l.observacoes() + " | Crédito: " + m.credito().observacoes();
                 if (obs.length() > 500)
-                    throw erro(l.numero(), com.roknauta.milheiro.web.Textos.get(
+                    throw erro(l.numero(), Msg.get(
                         "mensagem.observacoes.combinadas.da.transferencia.excedem.500.caracteres"));
                 o.setObservacoes(obs);
             } else
                 o.setValor(Dinheiro.de(l.valor()));
             try {
                 Operacao salva = importarOperacao(o, cadastro.get(nome(l.programa())).getId(), destino);
-                if (o.isTransferencia()) carteira.confirmarTransferenciaImportada(salva.getId());
+                if (o.isTransferencia()) transferenciaService.confirmarTransferenciaImportada(salva.getId());
             } catch (IllegalArgumentException e) {
                 throw erro(l.numero(), e.getMessage());
             }
@@ -272,23 +291,33 @@ public class PlanilhaService {
         return new Resultado(salvos, criados, transferencias);
     }
 
-    private Operacao importarOperacao(com.roknauta.milheiro.dto.OperacaoFormulario formulario,
+    private com.roknauta.milheiro.dto.crud.OperacaoDTO novoDTO(TipoOperacao tipo) {
+        Map<TipoOperacao, java.util.function.Supplier<com.roknauta.milheiro.dto.crud.OperacaoDTO>> tipos = Map.of(
+                TipoOperacao.ACUMULO, com.roknauta.milheiro.dto.crud.AcumuloDTO::new,
+                TipoOperacao.VENDA, com.roknauta.milheiro.dto.crud.VendaDTO::new,
+                TipoOperacao.RESGATE, com.roknauta.milheiro.dto.crud.ResgateDTO::new,
+                TipoOperacao.TRANSFERENCIA, com.roknauta.milheiro.dto.crud.TransferenciaDTO::new);
+        return java.util.Optional.ofNullable(tipos.get(tipo)).orElseThrow(() ->
+                new IllegalArgumentException(Msg.get("mensagem.tipo.invalido.use.acumulo.venda.resgate.ou.transferencia"))).get();
+    }
+
+    private Operacao importarOperacao(com.roknauta.milheiro.dto.crud.OperacaoDTO formulario,
         Long programaId, Long destinoId) {
         Map<TipoOperacao, java.util.function.Supplier<Operacao>> importadores = new EnumMap<>(TipoOperacao.class);
-        importadores.put(TipoOperacao.ACUMULO, () -> carteira.salvarAcumulo(formulario, programaId));
-        importadores.put(TipoOperacao.VENDA, () -> carteira.salvarVenda(formulario, programaId));
-        importadores.put(TipoOperacao.RESGATE, () -> carteira.salvarResgate(formulario, programaId));
-        importadores.put(TipoOperacao.TRANSFERENCIA, () -> carteira.salvarTransferencia(formulario, programaId, destinoId));
+        importadores.put(TipoOperacao.ACUMULO, () -> acumuloService.salvarAcumulo((com.roknauta.milheiro.dto.crud.AcumuloDTO) formulario, programaId));
+        importadores.put(TipoOperacao.VENDA, () -> vendaService.salvarVenda((com.roknauta.milheiro.dto.crud.VendaDTO) formulario, programaId));
+        importadores.put(TipoOperacao.RESGATE, () -> resgateService.salvarResgate((com.roknauta.milheiro.dto.crud.ResgateDTO) formulario, programaId));
+        importadores.put(TipoOperacao.TRANSFERENCIA, () -> transferenciaService.salvarTransferencia((com.roknauta.milheiro.dto.crud.TransferenciaDTO) formulario, programaId, destinoId));
         var importador = importadores.get(formulario.getTipo());
         if (importador == null)
-            throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get(
+            throw new IllegalArgumentException(Msg.get(
                 "mensagem.tipo.invalido.use.acumulo.venda.resgate.ou.transferencia"));
         return importador.get();
     }
 
     public byte[] modelo() {
         try (XSSFWorkbook wb = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet s = wb.createSheet(com.roknauta.milheiro.web.Textos.get("planilha.aba.operacoes"));
+            Sheet s = wb.createSheet(Msg.get("planilha.aba.operacoes"));
             Row h = s.createRow(0);
             CellStyle heading = wb.createCellStyle();
             heading.setFillForegroundColor(IndexedColors.SEA_GREEN.getIndex());
@@ -314,27 +343,27 @@ public class PlanilhaService {
             s.setDefaultColumnStyle(2, pontos);
             s.createFreezePane(0, 1);
             s.setAutoFilter(new org.apache.poi.ss.util.CellRangeAddress(0, 1000, 0, 5));
-            Sheet ajuda = wb.createSheet(com.roknauta.milheiro.web.Textos.get("planilha.aba.instrucoes"));
+            Sheet ajuda = wb.createSheet(Msg.get("planilha.aba.instrucoes"));
             ajuda.setColumnWidth(0, 120 * 256);
-            String[] notas = {com.roknauta.milheiro.web.Textos.get(
+            String[] notas = {Msg.get(
                 "mensagem.preencha.a.primeira.aba.somente.a.a.f.serao.importadas.remova.exemplos.antes.de."),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "mensagem.data.data.excel.ou.dd.mm.aaaa.tipos.acumulo.venda.resgate.transferencia"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "mensagem.quantidade.ate.duas.casas.saidas.aceitam.positivo.ou.negativo.acumulo.deve.ser.p"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "mensagem.destino.programa.que.recebe.no.acumulo.programa.de.origem.nas.saidas"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "mensagem.valor.total.pago.no.acumulo.liquido.recebido.na.venda.taxas.complemento.no.resga"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "mensagem.transferencia.duas.linhas.na.mesma.data.saida.com.observacao.para.azul.fidelidad"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "mensagem.o.par.vira.uma.unica.operacao.quantidades.definem.a.conversao.efetiva.ja.incluin"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "mensagem.o.custo.do.credito.de.transferencia.e.recalculado.pelo.acumulado.historico.o.val"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "planilha.programas.preservados"),
-                com.roknauta.milheiro.web.Textos.get(
+                Msg.get(
                     "planilha.importacao.substituicao")};
             for (int i = 0; i < notas.length; i++)
                 ajuda.createRow(i).createCell(0).setCellValue(notas[i]);
@@ -342,7 +371,7 @@ public class PlanilhaService {
             return out.toByteArray();
         } catch (IOException e) {
             throw new IllegalStateException(
-                com.roknauta.milheiro.web.Textos.get("mensagem.nao.foi.possivel.gerar.o.modelo"), e);
+                Msg.get("mensagem.nao.foi.possivel.gerar.o.modelo"), e);
         }
     }
 }

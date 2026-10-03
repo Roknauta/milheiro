@@ -1,6 +1,7 @@
 package com.roknauta.milheiro.web.converter;
 
 import com.roknauta.milheiro.domain.Dinheiro;
+import com.roknauta.milheiro.web.Msg;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
@@ -31,14 +32,14 @@ public class DinheiroConverter implements Converter<Dinheiro> {
             try {
                 return new Dinheiro(entrada);
             } catch (NumberFormatException erro) {
-                String mensagem = com.roknauta.milheiro.web.Textos.get("componente.dinheiro.invalido");
+                String mensagem = Msg.get("componente.dinheiro.invalido");
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem, mensagem));
             }
         }
         ParsePosition posicao = new ParsePosition(0);
         Number valor = formato().parse(entrada, posicao);
         if (valor == null || posicao.getIndex() != entrada.length()) {
-            String mensagem = com.roknauta.milheiro.web.Textos.get("componente.dinheiro.invalido");
+            String mensagem = Msg.get("componente.dinheiro.invalido");
             throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem, mensagem));
         }
         return Dinheiro.de((BigDecimal) valor);

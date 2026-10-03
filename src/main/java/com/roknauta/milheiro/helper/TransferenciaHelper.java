@@ -3,7 +3,7 @@ package com.roknauta.milheiro.helper;
 import com.roknauta.milheiro.domain.Dinheiro;
 import com.roknauta.milheiro.dto.*;
 import com.roknauta.milheiro.service.*;
-import com.roknauta.milheiro.web.Textos;
+import com.roknauta.milheiro.web.Msg;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -12,21 +12,21 @@ public final class TransferenciaHelper {
 
     public static ResultadoTransferencia calcular(ParametrosTransferencia p, Resumo origem,
         boolean receber, int escala, RoundingMode arredondamento) {
-        Calculos.positivo(p.quantidade(), Textos.get("campo.quantidade"));
-        Calculos.positivo(p.pontosOrigem(), Textos.get("interface.proporcao.de.origem"));
+        Calculos.positivo(p.quantidade(), Msg.get("campo.quantidade"));
+        Calculos.positivo(p.pontosOrigem(), Msg.get("interface.proporcao.de.origem"));
         BigDecimal multiplicador = Calculos.multiplicador(p.pontosDestino(), p.bonus());
         BigDecimal total = receber ? p.quantidade().multiply(p.pontosOrigem())
             .divide(multiplicador, 3, RoundingMode.CEILING) : p.quantidade();
         BigDecimal debito = p.comCarrinho() ? p.pontosDebitarSaldo() : total;
         BigDecimal compra = p.comCarrinho() ? p.valorCarrinho() : BigDecimal.ZERO;
-        Calculos.naoNegativo(debito, Textos.get("interface.pontos.debitados.do.saldo.da.origem"));
-        Calculos.naoNegativo(compra, Textos.get("interface.valor.do.carrinho"));
-        Calculos.naoNegativo(p.taxas(), Textos.get("campo.taxas"));
+        Calculos.naoNegativo(debito, Msg.get("interface.pontos.debitados.do.saldo.da.origem"));
+        Calculos.naoNegativo(compra, Msg.get("interface.valor.do.carrinho"));
+        Calculos.naoNegativo(p.taxas(), Msg.get("campo.taxas"));
         if (debito.compareTo(total) > 0)
-            throw new IllegalArgumentException(Textos.get("interface.os.pontos.a.debitar.do.saldo.nao.podem.superar.o.total.da.transferencia"));
+            throw new IllegalArgumentException(Msg.get("interface.os.pontos.a.debitar.do.saldo.nao.podem.superar.o.total.da.transferencia"));
         BigDecimal comprados = total.subtract(debito);
         if (comprados.signum() == 0 && compra.signum() > 0)
-            throw new IllegalArgumentException(Textos.get("interface.nao.ha.pontos.a.comprar.no.carrinho.informe.valor.zero.ou.reduza.os.pontos.a.d"));
+            throw new IllegalArgumentException(Msg.get("interface.nao.ha.pontos.a.comprar.no.carrinho.informe.valor.zero.ou.reduza.os.pontos.a.d"));
         BigDecimal base = Calculos.transferirProporcao(total, p.pontosOrigem(), p.pontosDestino(),
             BigDecimal.ZERO, escala, arredondamento);
         BigDecimal creditos = total.multiply(multiplicador).divide(p.pontosOrigem(), escala, arredondamento);

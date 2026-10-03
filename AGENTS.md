@@ -5,6 +5,7 @@
 Por orientação explícita do usuário, a partir de agora:
 
 - Não criar, alterar ou executar testes unitários neste projeto.
+- Não fazer testes na aplicação.
 - Não executar comandos de teste abrangentes que incluam testes unitários, como `mvn test`.
 - Não realizar nenhuma validação dos ajustes sem solicitação explícita do usuário.
 - Preservar os testes existentes; esta orientação não autoriza removê-los.
@@ -12,6 +13,8 @@ Por orientação explícita do usuário, a partir de agora:
 Esta orientação permanece válida até que o usuário solicite sua alteração.
 
 ## Interface e mensagens
+
+- Usar `src/main/resources/META-INF/resources/programa-fidelidade.xhtml` e `src/main/java/com/roknauta/milheiro/web/crud/ProgramaFidelidadeController.java` como padrão para criar ou adaptar telas CRUD. Cada cadastro deve possuir uma classe DTO e uma classe Service próprias, seguindo a estrutura de `CrudControllerBase` e `CrudService`. Essa referência atualiza o padrão de telas CRUD; preservar as regras específicas dos controllers e serviços de operações descritas neste documento.
 
 - Usar o cadastro de pessoa física de `/home/douglas/workspace/idea/termitech` como referência de CRUD. Centralizar a estrutura em `WEB-INF/crud.xhtml`: Novo acima dos filtros, Pesquisar dentro dos filtros e ações de salvar e voltar/cancelar no rodapé do formulário.
 - Abrir somente a pesquisa por padrão; mostrar resultados depois de Pesquisar e formulário somente após Novo ou Editar.
@@ -40,7 +43,7 @@ Esta orientação permanece válida até que o usuário solicite sua alteração
 ## Modelo das operações
 
 - Operacao é a base abstrata das entidades Acumulo, Transferencia, Venda, Resgate e Estorno, com herança JOINED.
-- Dados temporários de formulário, carrinho, proporção e bônus ficam em OperacaoFormulario. Compartilhar cálculos pelo TransferenciaHelper.
+- OperacaoDTO herda BaseDTO e concentra os atributos comuns. AcumuloDTO, TransferenciaDTO, VendaDTO, ResgateDTO e EstornoDTO reaproveitam essa base e declaram somente seus atributos específicos. Não recriar OperacaoFormulario. Carrinho, proporção, bônus e resumo ficam em TransferenciaDTO; compartilhar cálculos pelo TransferenciaHelper nos serviços.
 - Persistir os movimentos finais, custos e o valor adicional das transferências; manter versão para concorrência e vínculo/parcela dos créditos.
 - Atualizar Consolidado (programa, acumulado, saldo e milheiro) na mesma transação de cada operação, importação e mudança de status.
 - Estorno é integral e vinculado a uma operação confirmada, com data igual ou posterior. Impedir estornos confirmados duplicados e estorno de estorno.
@@ -51,10 +54,10 @@ Esta orientação permanece válida até que o usuário solicite sua alteração
 ## Telas e controllers de operações
 
 - Cada operação possui XHTML completo e controller próprio: AcumuloController, TransferenciaController, VendaController, ResgateController e EstornoController.
-- OperacaoController centraliza somente pesquisa, inclusão, mensagens, navegação e alteração de status.
-- Manter cálculos de transferência, fator, carrinho e resumo em TransferenciaController; seleção e resumo do lançamento original em EstornoController.
+- Não recriar OperacaoController. Cada controller de operação estende diretamente CrudControllerBase com seu DTO e Service específicos. Ações extras, como cancelar e confirmar, são declaradas nos respectivos controllers e delegam ao serviço específico. Cancelamento é comum na base; confirmação pertence a AcumuloService. Preservar a versão apresentada no grid. Não manter regras de operação nos controllers.
+- Concentrar cálculos de transferência, aplicação de fator, carrinho e resumo em TransferenciaService; seleção, elegibilidade e resumo do lançamento original em EstornoService. Os controllers específicos apenas delegam as ações da tela aos respectivos serviços.
 - Cada XHTML define seus campos e colunas, sem escolher a operação pela URL nem usar um formulário genérico condicionado pelo tipo.
-- Compartilhar somente o layout CRUD e fragmentos de ações comuns. DashboardController é responsável pelo dashboard; CarteiraBean permanece responsável pelos fatores. ProgramaFidelidadeController é responsável pelo cadastro de programas de fidelidade.
+- Compartilhar somente o layout CRUD e fragmentos de ações comuns. DashboardController é responsável pelo dashboard; FatorConversaoController é responsável pelo cadastro de fatores, usando FatorConversaoDTO e FatorConversaoService em fator-conversao.xhtml. ProgramaFidelidadeController é responsável pelo cadastro de programas de fidelidade.
 
 ## Identidade e atributos comuns das entidades
 
@@ -64,14 +67,14 @@ Esta orientação permanece válida até que o usuário solicite sua alteração
 
 ## Serviço das operações
 
-- OperacaoService é o serviço principal. Expor salvarAcumulo, salvarTransferencia, salvarVenda, salvarResgate e salvarEstorno, com retornos específicos.
-- Cada controller chama diretamente o método do seu tipo. Compartilhar apenas preparação comum, persistência e consolidação; não recriar um salvarOperacao genérico com decisões por tipo.
+- OperacaoService é a única classe base concreta, sem parâmetros genéricos, para os serviços de operações e seus consumidores comuns. Compartilhar nessa base somente preparação comum, controle de versão/status, bloqueios de integridade, exclusão comum e orquestração da consolidação; os serviços filhos herdam diretamente de OperacaoService e implementam CrudService com seu DTO específico. OperacaoService é o bean principal (`@Primary`) para consultas de operações, dashboard, calculadora e importação.
+- Cada controller CRUD usa seu DTO e Service específicos; salvarAcumulo, salvarTransferencia, salvarVenda, salvarResgate e salvarEstorno são implementados exclusivamente nos respectivos serviços filhos. Compartilhar apenas preparação comum, persistência e consolidação; não recriar um salvarOperacao genérico com decisões por tipo.
 
 ## Construção das entidades
 
 - Usar @SuperBuilder em toda a hierarquia das entidades, incluindo EntidadeBase, preservando @NoArgsConstructor para JPA e consumidores existentes.
 - Preservar inicializações dos atributos com @Builder.Default. Não informar id ou versão ao construir novos registros.
-- Serviços devem criar entidades com builders; atualizações de entidades já persistidas continuam usando setters, sem criar cópias com toBuilder.
+- Serviços devem usar o mapper próprio da entidade para converter DTOs em entidades com toEntity e atualizar registros existentes com updateEntity e @MappingTarget. Não montar entidades com builders nos serviços nem criar cópias com toBuilder. Configurar MapStruct com builder desabilitado; preservar os defaults dos construtores JPA. Cálculos e associações controladas pelo negócio permanecem nos serviços, preservando id, versão, status e vínculos nas edições.
 
 ## Importação substitutiva
 
@@ -118,3 +121,50 @@ Esta orientação permanece válida até que o usuário solicite sua alteração
 
 - Menus e arquivos das operações no singular: Acúmulo (acumulo.xhtml), Transferência (transferencia.xhtml), Venda (venda.xhtml), Resgate (resgate.xhtml) e Estorno (estorno.xhtml).
 - O template CRUD mostra Cadastrando <menu> para registros novos e Editando <menu> para registros existentes, distinguindo pelo id do registro.
+
+## Reaproveitamento e responsabilidades
+
+- Sempre reaproveitar atributos e código compartilhados quando necessário, evitando duplicações. DTOs filhos devem herdar os atributos básicos de OperacaoDTO, seguindo o padrão de ProgramaFidelidadeController e CrudControllerBase.
+- Evitar ao máximo `if` para decidir comportamento por tipo; preferir polimorfismo, métodos específicos e composição. Preservar condições necessárias às regras de integridade e às pré-condições dos serviços.
+- Controllers cuidam somente da apresentação, navegação e chamadas aos serviços. Lógicas de operação ficam nos Services específicos dos filhos de Operacao, com reaproveitamento dos serviços comuns e de OperacaoService para as regras transacionais existentes.
+
+## Mappers por entidade
+
+- Sempre criar um mapper MapStruct próprio para cada entidade, seguindo ProgramaFidelidadeMapper: `@Mapper(componentModel = "spring")`, conversão para DTO e, nas entidades concretas, métodos de criação e atualização com `@MappingTarget`.
+- Não concentrar conversões de entidades diferentes em um mapper único, nem recriar OperacaoDTOMapper. Mappers de associações são reutilizados por `uses`; atributos comuns podem compartilhar uma `@MapperConfig`.
+- Preservar id, versão, status e vínculos controlados pelo serviço nas atualizações; não atribuir id ou versão na construção de novos registros.
+
+## Escopo dos serviços de operações
+
+- OperacaoService concentra somente comportamento comum a todas as operações. Não implementar nessa base gravação por tipo, confirmação de acúmulo, criação/edição de créditos, preparação de estorno nem efeitos específicos sobre o consolidado. Não incluir CRUD nem consultas de cadastro de programas ou fatores.
+- ProgramaFidelidadeService concentra o cadastro e a consulta de programas; FatorConversaoService concentra o cadastro e a consulta de fatores. Dashboard, calculadora, importação e controllers devem chamar o serviço correspondente à responsabilidade, preservando as transações existentes.
+
+## Anotações e exclusão no padrão CRUD
+
+- Controllers CRUD usam `@Component` e `@ViewScoped` (`jakarta.faces.view.ViewScoped`), seguindo `web/crud/ProgramaFidelidadeController.java`. Não usar anotações JPA de entidade nos controllers.
+- A exclusão é a ação `delete` de CrudControllerBase; não criar `deleteRegistro` nos controllers concretos. Reaproveitar o fluxo de atualização dos resultados e mensagens da base.
+- Os Services específicos de operações implementam `delete(DTO)` delegando a `super.excluir(dto)` em OperacaoService. O grid envia o DTO para preservar a versão exibida e o controle de concorrência; os demais cadastros podem usar `delete(Long)`.
+
+## Distribuição das regras por operação
+
+- OperacaoService contém apenas comportamento comum; não manter métodos específicos dos filhos nessa base. Cada serviço concentra gravação e regras do seu tipo, chamando os métodos comuns públicos de OperacaoService.
+- AcumuloService cuida da gravação, confirmação e criação/validação dos créditos. TransferenciaService cuida da gravação/edição da transferência, exclusão dos créditos vinculados e confirmação de transferências importadas. VendaService e ResgateService cuidam de suas gravações. EstornoService cuida da gravação e preparação do estorno.
+- Os efeitos específicos de cada tipo sobre os saldos ficam no respectivo serviço. A base apenas orquestra a reconstrução do histórico e a atualização transacional dos consolidados.
+- A importação chama os serviços específicos para gravar cada tipo e mantém a limpeza e a carga na mesma transação.
+
+## Unificação dos serviços comuns
+
+- Manter somente OperacaoService como base e serviço comum, sem generics. Não recriar OperacaoConsultaService nem OperacaoCrudService.
+- Os Services filhos herdam diretamente OperacaoService, implementam CrudService com o DTO concreto e chamam métodos públicos da base para consultas, filtros, preparação, exclusão, status, integridade e consolidação comuns.
+- Preservar métodos e repositórios específicos de gravação nos filhos; a base não decide como salvar cada tipo.
+
+## Conversão de DTO para entidade
+
+- Reaproveitar os mappers por entidade em vez de builders Lombok ou cópia manual dos atributos do DTO. Id e versão não são mapeados na criação; status e vínculos são definidos/preservados pelas regras do serviço.
+- A preparação comum de lançamentos valida os dados e resolve o programa; a conversão dos atributos é responsabilidade do mapper. Os cálculos específicos continuam no serviço de cada tipo.
+
+## Autocomplete de cadastros
+
+- Centralizar as buscas de autocomplete em web/crud/CrudHelper. getProgramasFidelidade(String nome) chama ProgramaFidelidadeService.buscarPorNome(nome), recebe DTOs e converte para SelectItem com id Long e nome como label.
+- O serviço passa o texto pesquisado ao repository; buscar programas ativos por nome, sem carregar todo o cadastro para filtrar na memória. O repository define a busca sem distinção de maiúsculas/minúsculas e ordena por nome.
+- O composite programaFidelidadeAutoComplete utiliza CrudHelper, sem receber listas dos controllers. Preservar seleção por id Long, label da seleção existente, validação e eventos itemSelect/clear.

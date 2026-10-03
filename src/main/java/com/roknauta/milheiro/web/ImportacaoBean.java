@@ -31,18 +31,18 @@ public class ImportacaoBean {
             if (arquivo == null || arquivo.getSize() == 0 || arquivo.getSize() > PlanilhaService.LIMITE_BYTES || !arquivo.getSubmittedFileName()
                 .toLowerCase(Locale.ROOT).endsWith(".xlsx"))
                 throw new IllegalArgumentException(
-                    com.roknauta.milheiro.web.Textos.get("interface.selecione.um.arquivo.xlsx.de.ate.5.mb"));
+                    Msg.get("interface.selecione.um.arquivo.xlsx.de.ate.5.mb"));
             try (InputStream in = arquivo.getInputStream()) {
                 var r = service.importar(in.readNBytes(PlanilhaService.LIMITE_BYTES + 1));
-                resultado = r.importadas() + " " + com.roknauta.milheiro.web.Textos.get(
-                    "interface.operacoes.importadas") + " " + r.programasCriados() + " " + com.roknauta.milheiro.web.Textos.get(
-                    "interface.programas.criados.e") + " " + r.transferencias() + " " + com.roknauta.milheiro.web.Textos.get(
+                resultado = r.importadas() + " " + Msg.get(
+                    "interface.operacoes.importadas") + " " + r.programasCriados() + " " + Msg.get(
+                    "interface.programas.criados.e") + " " + r.transferencias() + " " + Msg.get(
                     "interface.transferencias.consolidadas");
             }
         } catch (IllegalArgumentException e) {
             mensagem(e.getMessage());
         } catch (Exception e) {
-            mensagem(com.roknauta.milheiro.web.Textos.get(
+            mensagem(Msg.get(
                 "interface.a.importacao.nao.foi.concluida.nenhum.registro.deste.arquivo.foi.gravado.verif"));
         } finally {
             if (arquivo != null) {

@@ -3,7 +3,7 @@ package com.roknauta.milheiro.service;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.roknauta.milheiro.web.Textos;
+import com.roknauta.milheiro.web.Msg;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -100,7 +100,7 @@ public class MigracaoOperacoes {
 
     private void migrarValoresFinanceiros() {
         if (jdbc.queryForObject("select count(*) from operacao where desembolso is null", Long.class) != 0)
-            throw new IllegalStateException(Textos.get("operacao.migracao.incompleta"));
+            throw new IllegalStateException(Msg.get("operacao.migracao.incompleta"));
         jdbc.update("update transferencia t set valor_adicional=(select o.desembolso from operacao o where o.id=t.id)");
         jdbc.update("update operacao set valor=valor-desembolso where tipo='VENDA'");
         jdbc.update("update operacao set valor=desembolso where tipo='RESGATE'");
@@ -134,7 +134,7 @@ public class MigracaoOperacoes {
     public void concluir() {
         if (coluna("DESEMBOLSO") && jdbc.queryForObject(
             "select count(*) from migracao_modelo where nome='valor_adicional'", Long.class) == 0)
-            throw new IllegalStateException(Textos.get("operacao.migracao.incompleta"));
+            throw new IllegalStateException(Msg.get("operacao.migracao.incompleta"));
         var restricoes = jdbc.queryForList("select distinct tc.constraint_name, cc.check_clause "
             + "from information_schema.table_constraints tc join information_schema.check_constraints cc "
             + "on tc.constraint_name=cc.constraint_name and tc.constraint_schema=cc.constraint_schema "

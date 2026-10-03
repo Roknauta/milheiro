@@ -1,5 +1,6 @@
 package com.roknauta.milheiro.config;
 
+import com.roknauta.milheiro.web.Msg;
 import org.hsqldb.Database;
 import org.hsqldb.Server;
 import org.hsqldb.server.ServerConstants;
@@ -15,8 +16,8 @@ public final class HsqlDatabaseServer implements AutoCloseable {
     private final String name;
 
     public HsqlDatabaseServer(Path path, int port, String name) {
-        if (port < 0 || port > 65535) throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get("banco.porta.invalida"));
-        if (!name.matches("[a-zA-Z0-9_-]+")) throw new IllegalArgumentException(com.roknauta.milheiro.web.Textos.get("banco.nome.invalido"));
+        if (port < 0 || port > 65535) throw new IllegalArgumentException(Msg.get("banco.porta.invalida"));
+        if (!name.matches("[a-zA-Z0-9_-]+")) throw new IllegalArgumentException(Msg.get("banco.nome.invalido"));
         this.path = path.toAbsolutePath().normalize();
         this.name = name;
         server.setNoSystemExit(true);
@@ -33,11 +34,11 @@ public final class HsqlDatabaseServer implements AutoCloseable {
             Files.createDirectories(path.getParent());
             server.start();
             if (server.getState() != ServerConstants.SERVER_STATE_ONLINE) {
-                throw new IllegalStateException(com.roknauta.milheiro.web.Textos.get("banco.inicio.falhou"), server.getServerError());
+                throw new IllegalStateException(Msg.get("banco.inicio.falhou"), server.getServerError());
             }
         } catch (IOException | RuntimeException e) {
             close();
-            throw new IllegalStateException(com.roknauta.milheiro.web.Textos.formatar("banco.inicio.caminho", path), e);
+            throw new IllegalStateException(Msg.formatar("banco.inicio.caminho", path), e);
         }
     }
 
