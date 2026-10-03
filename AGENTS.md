@@ -14,7 +14,7 @@ Esta orientação permanece válida até que o usuário solicite sua alteração
 
 ## Interface e mensagens
 
-- Usar `src/main/resources/META-INF/resources/programa-fidelidade.xhtml` e `src/main/java/com/roknauta/milheiro/web/crud/ProgramaFidelidadeController.java` como padrão para criar ou adaptar telas CRUD. Cada cadastro deve possuir uma classe DTO e uma classe Service próprias, seguindo a estrutura de `CrudControllerBase` e `CrudService`. Essa referência atualiza o padrão de telas CRUD; preservar as regras específicas dos controllers e serviços de operações descritas neste documento.
+- Usar `src/main/resources/META-INF/resources/crud/programa-fidelidade.xhtml` e `src/main/java/com/roknauta/milheiro/web/crud/ProgramaFidelidadeController.java` como padrão para criar ou adaptar telas CRUD. Cada cadastro deve possuir uma classe DTO e uma classe Service próprias, seguindo a estrutura de `CrudControllerBase` e `CrudService`. Essa referência atualiza o padrão de telas CRUD; preservar as regras específicas dos controllers e serviços de operações descritas neste documento.
 
 - Usar o cadastro de pessoa física de `/home/douglas/workspace/idea/termitech` como referência de CRUD. Centralizar a estrutura em `WEB-INF/crud.xhtml`: Novo acima dos filtros, Pesquisar dentro dos filtros e ações de salvar e voltar/cancelar no rodapé do formulário.
 - Abrir somente a pesquisa por padrão; mostrar resultados depois de Pesquisar e formulário somente após Novo ou Editar.

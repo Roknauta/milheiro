@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
-                xmlns:m="jakarta.faces.composite/resources/milheiro" xmlns:t="http://milheiro.com/jsf"
-                template="/WEB-INF/crud.xhtml">
+                xmlns:m="jakarta.faces.composite/resources/components" xmlns:t="http://milheiro.com/jsf"
+                template="/layout/crud.xhtml">
     <ui:param name="crudController" value="#{fatorConversaoController}"/>
     <ui:define name="titulo"> #{msg['interface.fatores.de.conversao']} </ui:define>
     <ui:param name="formId" value="fatorConversaoEditForm"/>
@@ -23,19 +23,16 @@
         </h:panelGroup>
     </ui:define>
     <ui:define name="resultados">
-        <p:panel rendered="#{not fatorConversaoController.editing and fatorConversaoController.pesquisaRealizada}" header="#{msg['crud.resultados']}">
-            <h:outputText value="#{msg['interface.conversoes.cadastradas']}"/>
-            <p:dataTable id="registros" rendered="#{fatorConversaoController.pesquisaRealizada}" showGridlines="true" value="#{fatorConversaoController.result}"
-                         emptyMessage="#{msg['interface.nenhum.fator.cadastrado']}" reflow="true" var="item" paginatorPosition="bottom">
-                <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
-                    <m:rowActions id="acoes" edit="#{fatorConversaoController.edit(item.id)}" remove="#{fatorConversaoController.delete(item.id)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
-                                  confirmHeader="#{msg['interface.excluir.registro']}" confirmMessage="#{msg['interface.confirma.esta.acao']}"/>
-                </p:column>
-                <t:column headerText="#{msg['interface.origem']}" value="#{item.origem.nome}"/>
-                <t:column headerText="#{msg['interface.destino.2']}" value="#{item.destino.nome}"/>
-                <t:column headerText="#{msg['interface.pontos.origem']}" value="#{item.pontosOrigem}" converter="decimalConverter"/>
-                <t:column headerText="#{msg['interface.pontos.destino']}" value="#{item.pontosDestino}" converter="decimalConverter"/>
-            </p:dataTable>
-        </p:panel>
+        <p:dataTable id="registros" rendered="#{fatorConversaoController.pesquisaRealizada}" showGridlines="true" value="#{fatorConversaoController.result}"
+                     emptyMessage="#{msg['interface.nenhum.fator.cadastrado']}" reflow="true" var="item" paginatorPosition="bottom">
+            <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
+                <m:rowActions id="acoes" edit="#{fatorConversaoController.edit(item.id)}" remove="#{fatorConversaoController.delete(item.id)}" disabled="false" removeLabel="#{msg['interface.excluir']}"
+                              confirmHeader="#{msg['interface.excluir.registro']}" confirmMessage="#{msg['interface.confirma.esta.acao']}"/>
+            </p:column>
+            <t:column headerText="#{msg['interface.origem']}" value="#{item.origem.nome}"/>
+            <t:column headerText="#{msg['interface.destino.2']}" value="#{item.destino.nome}"/>
+            <t:column headerText="#{msg['interface.pontos.origem']}" value="#{item.pontosOrigem}" converter="decimalConverter"/>
+            <t:column headerText="#{msg['interface.pontos.destino']}" value="#{item.pontosDestino}" converter="decimalConverter"/>
+        </p:dataTable>
     </ui:define>
 </ui:composition>

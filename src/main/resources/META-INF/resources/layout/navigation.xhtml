@@ -1,0 +1,48 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="jakarta.faces.passthrough">
+<!--    <p:panel id="navigation" header="#{msg['interface.menu.principal']}">-->
+        <p:panelMenu multiple="true">
+            <p:menuitem value="#{msg['interface.dashboard']}" outcome="/dashboard" icon="pi pi-chart-bar"
+                        styleClass="#{view.viewId eq '/dashboard.xhtml' ? 'menu-atual' : ''}"
+                        pt:aria-current="#{view.viewId eq '/dashboard.xhtml' ? 'page' : null}"/>
+            <p:submenu label="#{msg['interface.milheiro']}" expanded="true">
+                <p:menuitem value="#{msg['interface.importar.de.planilha']}" outcome="/importar" icon="pi pi-file-excel"
+                            styleClass="#{view.viewId eq '/importar.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/importar.xhtml' ? 'page' : null}"/>
+            </p:submenu>
+            <p:submenu label="#{msg['operacao.menu']}" expanded="true">
+                <p:menuitem value="#{msg['operacao.acumulo']}" outcome="/crud/acumulo" icon="pi pi-plus-circle"
+                            styleClass="#{view.viewId eq '/crud/acumulo.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/crud/acumulo.xhtml' ? 'page' : null}"/>
+                <p:menuitem value="#{msg['operacao.transferencia']}" outcome="/crud/transferencia" icon="pi pi-send"
+                            styleClass="#{view.viewId eq '/crud/transferencia.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/crud/transferencia.xhtml' ? 'page' : null}"/>
+                <p:menuitem value="#{msg['operacao.venda']}" outcome="/crud/venda" icon="pi pi-dollar"
+                            styleClass="#{view.viewId eq '/crud/venda.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/crud/venda.xhtml' ? 'page' : null}"/>
+                <p:menuitem value="#{msg['operacao.resgate']}" outcome="/crud/resgate" icon="pi pi-ticket"
+                            styleClass="#{view.viewId eq '/crud/resgate.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/crud/resgate.xhtml' ? 'page' : null}"/>
+                <p:menuitem value="#{msg['operacao.estorno']}" outcome="/crud/estorno" icon="pi pi-undo"
+                            styleClass="#{view.viewId eq '/crud/estorno.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/crud/estorno.xhtml' ? 'page' : null}"/>
+            </p:submenu>
+            <p:submenu label="#{msg['interface.calculadora']}" expanded="true">
+                <p:menuitem value="#{msg['interface.enviar.2']}" outcome="/enviar" icon="pi pi-send"
+                            styleClass="#{view.viewId eq '/enviar.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/enviar.xhtml' ? 'page' : null}"/>
+                <p:menuitem value="#{msg['interface.receber.2']}" outcome="/receber" icon="pi pi-download"
+                            styleClass="#{view.viewId eq '/receber.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/receber.xhtml' ? 'page' : null}"/>
+            </p:submenu>
+            <p:submenu label="#{msg['interface.cadastros']}" expanded="true">
+                <p:menuitem value="#{msg['programa.fidelidade']}" outcome="/crud/programa-fidelidade" icon="pi pi-wallet"
+                            styleClass="#{view.viewId eq '/crud/programa-fidelidade.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/crud/programa-fidelidade.xhtml' ? 'page' : null}"/>
+                <p:menuitem value="#{msg['fator.conversao']}" outcome="/crud/fator-conversao" icon="pi pi-percentage"
+                            styleClass="#{view.viewId eq '/crud/fator-conversao.xhtml' ? 'menu-atual' : ''}"
+                            pt:aria-current="#{view.viewId eq '/crud/fator-conversao.xhtml' ? 'page' : null}"/>
+            </p:submenu>
+        </p:panelMenu>
+<!--    </p:panel>-->
+</ui:composition>

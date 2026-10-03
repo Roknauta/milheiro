@@ -12,17 +12,15 @@ public class LayoutController {
     private static final Map<String, Caminho> CAMINHOS = Map.ofEntries(
         Map.entry("/dashboard.xhtml", new Caminho(null, "interface.dashboard")),
         Map.entry("/importar.xhtml", new Caminho("interface.milheiro", "interface.importar.de.planilha")),
-        Map.entry("/acumulo.xhtml", new Caminho("operacao.menu", "operacao.acumulo")),
-        Map.entry("/transferencia.xhtml", new Caminho("operacao.menu", "operacao.transferencia")),
-        Map.entry("/venda.xhtml", new Caminho("operacao.menu", "operacao.venda")),
-        Map.entry("/resgate.xhtml", new Caminho("operacao.menu", "operacao.resgate")),
-        Map.entry("/estorno.xhtml", new Caminho("operacao.menu", "operacao.estorno")),
+        Map.entry("/crud/acumulo.xhtml", new Caminho("operacao.menu", "operacao.acumulo")),
+        Map.entry("/crud/transferencia.xhtml", new Caminho("operacao.menu", "operacao.transferencia")),
+        Map.entry("/crud/venda.xhtml", new Caminho("operacao.menu", "operacao.venda")),
+        Map.entry("/crud/resgate.xhtml", new Caminho("operacao.menu", "operacao.resgate")),
+        Map.entry("/crud/estorno.xhtml", new Caminho("operacao.menu", "operacao.estorno")),
         Map.entry("/enviar.xhtml", new Caminho("interface.calculadora", "interface.enviar.2")),
         Map.entry("/receber.xhtml", new Caminho("interface.calculadora", "interface.receber.2")),
-        Map.entry("/programa-fidelidade.xhtml", new Caminho("interface.cadastros", "programa.fidelidade")),
-        Map.entry("/fator-conversao.xhtml", new Caminho("interface.cadastros", "fator.conversao")),
-        Map.entry("/operacoes.xhtml", new Caminho("operacao.menu", "operacao.acumulo")),
-        Map.entry("/incluir-operacao.xhtml", new Caminho("operacao.menu", "operacao.acumulo"))
+        Map.entry("/crud/programa-fidelidade.xhtml", new Caminho("interface.cadastros", "programa.fidelidade")),
+        Map.entry("/crud/fator-conversao.xhtml", new Caminho("interface.cadastros", "fator.conversao"))
     );
 
     private Caminho caminhoAtual() {

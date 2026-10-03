@@ -3,23 +3,23 @@
     <namespace>http://milheiro.com/jsf</namespace>
     <tag>
         <tag-name>form</tag-name>
-        <source>tags/form.xhtml</source>
+        <source>../resources/tags/form.xhtml</source>
     </tag>
     <tag>
         <tag-name>panel</tag-name>
-        <source>tags/panel.xhtml</source>
+        <source>../resources/tags/panel.xhtml</source>
     </tag>
     <tag>
         <tag-name>container</tag-name>
-        <source>tags/container.xhtml</source>
+        <source>../resources/tags/container.xhtml</source>
     </tag>
     <tag>
         <tag-name>dataTable</tag-name>
-        <source>tags/dataTable.xhtml</source>
+        <source>../resources/tags/dataTable.xhtml</source>
     </tag>
     <tag>
         <tag-name>column</tag-name>
-        <source>tags/column.xhtml</source>
+        <source>../resources/tags/column.xhtml</source>
         <attribute>
             <name>headerText</name>
             <required>true</required>
@@ -75,10 +75,10 @@
     </tag>
     <tag>
         <tag-name>link</tag-name>
-        <source>tags/link.xhtml</source>
+        <source>../resources/tags/link.xhtml</source>
     </tag>
     <tag>
         <tag-name>outputLink</tag-name>
-        <source>tags/outputLink.xhtml</source>
+        <source>../resources/tags/outputLink.xhtml</source>
     </tag>
 </facelet-taglib>

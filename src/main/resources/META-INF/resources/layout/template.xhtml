@@ -1,5 +1,5 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/resources/milheiro" lang="pt-BR">
+      xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/resources/components" lang="pt-BR">
 <f:view locale="pt_BR">
     <f:event type="preRenderView" listener="#{layoutController.prepararSessao}"/>
     <h:head>
@@ -12,7 +12,7 @@
     <h:body styleClass="milheiro-app">
         <p:panelGrid columns="2" layout="grid" styleClass="app-shell">
             <h:panelGroup aria-label="#{msg['interface.menu.principal']}" layout="block" styleClass="app-sidebar">
-                <ui:include src="/WEB-INF/navigation.xhtml"/>
+                <ui:include src="/layout/navigation.xhtml"/>
             </h:panelGroup>
             <h:panelGroup layout="block" styleClass="app-workspace">
                 <p:breadCrumb>

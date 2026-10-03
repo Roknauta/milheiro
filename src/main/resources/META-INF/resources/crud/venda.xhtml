@@ -1,0 +1,47 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui" xmlns:f="jakarta.faces.core"
+                xmlns:m="jakarta.faces.composite/resources/components" xmlns:t="http://milheiro.com/jsf"
+                template="/layout/crud.xhtml">
+    <ui:param name="crudController" value="#{vendaController}"/>
+    <ui:param name="formId" value="movimentos"/>
+    <ui:define name="titulo">#{msg['operacao.venda']}</ui:define>
+    <ui:define name="searchField">
+        <m:inputText id="filtro" label="#{msg['interface.pesquisar.por.programa.tipo.ou.descricao']}" value="#{vendaController.searchForm.filtro}"/>
+    </ui:define>
+    <ui:define name="editField">
+        <p:panelGrid columns="2" layout="grid" styleClass="form-grid">
+            <m:datePicker id="data" value="#{vendaController.editForm.data}" label="#{msg['interface.data.2']}"
+                          pattern="dd/MM/yyyy" required="true"/>
+            <m:programaFidelidadeAutoComplete id="programa" value="#{vendaController.editForm.programaId}"
+                                              label="#{msg['interface.programa']}" required="true"/>
+            <m:inputNumber id="quantidade" value="#{vendaController.editForm.quantidade}"
+                           label="#{msg['interface.quantidade.de.pontos']}" required="true" decimalPlaces="0"
+                           decimalSeparator="," thousandSeparator="." minValue="1" maxValue="999999999999"/>
+            <m:inputNumber id="valor" value="#{vendaController.editForm.valor}"
+                           label="#{msg['interface.valor.liquido.recebido.r']}" required="true" decimalPlaces="2"
+                           decimalSeparator="," thousandSeparator="." minValue="0" maxValue="999999999999"/>
+        </p:panelGrid>
+        <h:outputText value="#{msg['interface.informe.o.valor.liquido.recebido.ja.descontadas.eventuais.taxas']}"/>
+        <m:inputTextarea id="observacoes" value="#{vendaController.editForm.observacoes}"
+                         label="#{msg['interface.observacoes']}" maxlength="500" rows="2" autoResize="true"/>
+    </ui:define>
+    <ui:define name="resultados">
+        <p:dataTable id="registros" value="#{vendaController.result}" var="item"
+                     paginator="true" rows="15" paginatorPosition="bottom" paginatorAlwaysVisible="false"
+                     showGridlines="true" reflow="true"
+                     emptyMessage="#{msg['interface.nenhuma.operacao.comece.cadastrando.seus.programas.e.saldos.iniciais.como.acum']}">
+            <p:column headerText="#{msg['interface.opcoes']}" styleClass="coluna-opcoes">
+                <ui:include src="/crud/operacoes/status.xhtml"/>
+            </p:column>
+            <t:column headerText="#{msg['operacao.numero']}" value="#{item.id}"/>
+            <t:column headerText="#{msg['interface.data.2']}" value="#{item.data}">
+                <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+            </t:column>
+            <t:column headerText="#{msg['interface.status']}" value="#{item.status.descricao}"/>
+            <t:column headerText="#{msg['interface.programa']}" value="#{item.programa.nome}"/>
+            <t:column headerText="#{msg['interface.quantidade.2']}" value="#{item.quantidade}" converter="quantidadeConverter"/>
+            <t:column headerText="#{msg['interface.valor.liquido.recebido.r']}" value="#{item.valor}" converter="monetarioConverter"/>
+            <t:column headerText="#{msg['interface.observacoes']}" value="#{item.observacoes}"/>
+        </p:dataTable>
+    </ui:define>
+</ui:composition>

@@ -1,7 +1,9 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/milheiro" xmlns:t="http://milheiro.com/jsf" xmlns:pt="jakarta.faces.passthrough" template="/WEB-INF/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="jakarta.faces.facelets" xmlns:cc="jakarta.faces.composite" xmlns:p="http://primefaces.org/ui"
+                xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" xmlns:m="jakarta.faces.composite/resources/components" xmlns:t="http://milheiro.com/jsf"
+                xmlns:pt="jakarta.faces.passthrough" template="/layout/template.xhtml">
     <ui:param name="pagina" value="#{msg['interface.dashboard']}"/>
     <ui:define name="titulo"> #{msg['interface.dashboard']} </ui:define>
-<ui:define name="conteudo">
+    <ui:define name="conteudo">
         <p:panelGrid columns="4" layout="grid" styleClass="dashboard-metrics">
             <p:panel styleClass="metric-card">
                 <h:panelGroup layout="block" styleClass="metric-label"> #{msg['interface.pontos.e.milhas.disponiveis']} </h:panelGroup>
